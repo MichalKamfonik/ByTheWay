@@ -1,4 +1,4 @@
-package pl.kamfonik.bytheway.controller;
+package pl.kamfonik.bytheway.mock;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.security.CurrentUser;
-import pl.kamfonik.bytheway.service.UserService;
 
 @Controller
 public class MockController {
