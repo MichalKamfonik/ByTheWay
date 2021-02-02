@@ -1,11 +1,14 @@
 package pl.kamfonik.bytheway.entity;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.time.Duration;
 import java.util.Set;
 
 @Entity
 @Table(name = "trips")
+@Data
 public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

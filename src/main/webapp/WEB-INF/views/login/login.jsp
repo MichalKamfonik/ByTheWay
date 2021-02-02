@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <title>Login</title>
@@ -10,6 +10,12 @@
     <div><label> Password: <input type="password" name="password"/> </label></div>
     <div><input type="submit" value="Sign In"/></div>
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+</form>
+<div>Don't have account?<br></div>
+<form method="get" action="<c:url value="/register"/>">
+    <div>
+        <input type="submit" value="Register"/>
+    </div>
 </form>
 </body>
 </html>

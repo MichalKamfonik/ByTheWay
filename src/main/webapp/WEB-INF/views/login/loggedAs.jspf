@@ -1,0 +1,9 @@
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<sec:authorize access="isAuthenticated()">
+    <p>Logged in as: <sec:authentication property="principal.username"/></p>
+    <p>Has role: <sec:authentication property="principal.authorities"/></p>
+    <form action="<c:url value="/logout"/>" method="post">
+        <input class="fa fa-id-badge" type="submit" value="Logout">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    </form>
+</sec:authorize>

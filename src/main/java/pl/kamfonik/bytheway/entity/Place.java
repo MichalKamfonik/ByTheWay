@@ -1,12 +1,13 @@
 package pl.kamfonik.bytheway.entity;
 
-import pl.kamfonik.bytheway.entity.Category;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "places")
+@Data
 public class Place {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

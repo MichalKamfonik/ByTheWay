@@ -16,10 +16,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/user/**").authenticated()
-                .antMatchers("/").permitAll()
-//                .anyRequest().permitAll()
+                .antMatchers("/mock/admin/**").hasRole("ADMIN")
+                .antMatchers("/mock/user/**").authenticated()
+                .antMatchers("/app/**").authenticated()
+                .antMatchers("/register").permitAll()
+                .anyRequest().permitAll()
                 .and().formLogin().loginPage("/login")
                 .and().logout().logoutSuccessUrl("/").permitAll()
                 .and().exceptionHandling().accessDeniedPage("/403");

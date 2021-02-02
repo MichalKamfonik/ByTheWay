@@ -1,18 +1,14 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>Home</title>
 </head>
 <body>
-<sec:authorize access="isAuthenticated()">
-    <p>Logged in as: <sec:authentication property="principal.username"/></p>
-    <p>Has role: <sec:authentication property="principal.authorities"/></p>
-    <form action="<c:url value="/logout"/>" method="post">
-        <input class="fa fa-id-badge" type="submit" value="Logout">
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-    </form>
-</sec:authorize>
+<H1>Welcome to ByTheWay App - never miss anything on your way!</H1>
+<form action="<c:url value="/app"/>" method="get">
+    <input type="submit" value="Try out!"/>
+</form>
+<%@include file="login/loggedAs.jspf"%>
 </body>
 </html>
