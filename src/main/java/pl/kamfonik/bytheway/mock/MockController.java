@@ -23,7 +23,7 @@ public class MockController {
 
     @GetMapping
     public String home(){
-        log.error(byTheWayProperties.getCategory().getApikey());
+        log.debug(byTheWayProperties.getCategory().getApikey());
         return "home";
     }
     @GetMapping("/admin")

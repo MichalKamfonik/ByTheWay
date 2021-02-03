@@ -2,9 +2,10 @@ package pl.kamfonik.bytheway.service;
 
 import pl.kamfonik.bytheway.entity.Category;
 
-import java.util.Set;
+import java.util.List;
 
 public interface CategoryService {
-    Set<Category> findAllCategories();
-    Set<Category> initialize();
+    List<Category> findAllCategories();
+    void initialize();
+    Category findById(Long id);
 }
