@@ -32,13 +32,11 @@
         <tr>
             <th>Position</th>
             <th>Name</th>
-            <th>Description</th>
         </tr>
         <c:forEach items="${categories}" var="category" varStatus="index">
             <tr>
                 <td>${index.count}</td>
                 <td>${category.name}</td>
-                <td>${category.description}</td>
             </tr>
         </c:forEach>
         <tr>
