@@ -47,7 +47,7 @@ public class AppController {
     public String manageCategories(@ModelAttribute User user, @AuthenticationPrincipal CurrentUser currentUser){
         User currentUserUser = currentUser.getUser();
         currentUserUser.setFavoriteCategories(user.getFavoriteCategories());
-        userService.saveUser(currentUserUser);
+        userService.updateUser(currentUserUser);
         return "redirect:/app";
     }
 }
