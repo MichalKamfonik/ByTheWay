@@ -12,10 +12,17 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("bytheway")
 public class ByTheWayProperties {
     private final Category category = new Category();
+    private final SearchPOI searchPOI = new SearchPOI();
     @Getter
     @Setter
     @ToString
     public static class Category {
+        private String apikey;
+    }
+    @Getter
+    @Setter
+    @ToString
+    public static class SearchPOI {
         private String apikey;
     }
 }

@@ -10,12 +10,15 @@ import java.util.List;
 @Data
 public class Place {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
     private String address;
+    @Column(nullable = false)
+    private Double lat;
+    @Column(nullable = false)
+    private Double lon;
     @ManyToMany
     private List<Category> categories;
 }

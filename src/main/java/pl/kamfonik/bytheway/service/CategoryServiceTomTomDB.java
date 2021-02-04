@@ -11,6 +11,7 @@ import pl.kamfonik.bytheway.entity.Category;
 import pl.kamfonik.bytheway.repository.CategoryRepository;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -55,5 +56,10 @@ public class CategoryServiceTomTomDB implements CategoryService {
     @Override
     public Category findById(Long id) {
         return categoryRepository.findById(id).orElseThrow();
+    }
+
+    @Override
+    public List<Category> findCategoriesWithIds(Collection<Long> ids) {
+        return categoryRepository.findAllById(ids);
     }
 }
