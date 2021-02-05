@@ -1,5 +1,6 @@
 package pl.kamfonik.bytheway.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Service
 @Setter
+@RequiredArgsConstructor
 @Slf4j
 public class CategoryServiceTomTomDB implements CategoryService {
 
@@ -23,11 +25,6 @@ public class CategoryServiceTomTomDB implements CategoryService {
     private final ByTheWayProperties byTheWayProperties;
     private static final String TOMTOM_CATEGORIES_API_URL =
             "https://api.tomtom.com/search/2/poiCategories.json?key=";
-
-    public CategoryServiceTomTomDB(CategoryRepository categoryRepository, ByTheWayProperties byTheWayProperties) {
-        this.categoryRepository = categoryRepository;
-        this.byTheWayProperties = byTheWayProperties;
-    }
 
     @Override
     public List<Category> findAllCategories() {

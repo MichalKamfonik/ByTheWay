@@ -1,5 +1,6 @@
 package pl.kamfonik.bytheway.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,17 +15,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PlaceServiceTomTom implements PlaceService {
 
     private final CategoryService categoryService;
     private final ByTheWayProperties byTheWayProperties;
     private static final String TOMTOM_SEARCH_POI_API_URL =
             "https://api.tomtom.com/search/2/poiSearch/__QUERY__.json?typeahead=true&countrySet=PL&key=";
-
-    public PlaceServiceTomTom(CategoryService categoryService, ByTheWayProperties byTheWayProperties) {
-        this.categoryService = categoryService;
-        this.byTheWayProperties = byTheWayProperties;
-    }
 
     @Override
     public List<Place> findPlaces(String query) {

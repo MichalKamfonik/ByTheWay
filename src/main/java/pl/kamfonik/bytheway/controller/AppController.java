@@ -1,5 +1,6 @@
 package pl.kamfonik.bytheway.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,18 +15,12 @@ import pl.kamfonik.bytheway.service.UserService;
 
 @Controller
 @Slf4j
-@SessionAttributes("newTrip")
+@RequiredArgsConstructor
 @RequestMapping("/app")
 public class AppController {
     private final PlanService planService;
     private final CategoryService categoryService;
     private final UserService userService;
-
-    public AppController(PlanService planService, CategoryService categoryService, UserService userService) {
-        this.planService = planService;
-        this.categoryService = categoryService;
-        this.userService = userService;
-    }
 
     @GetMapping
     public String dashboard(Model model, @AuthenticationPrincipal CurrentUser currentUser){

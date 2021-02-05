@@ -1,5 +1,6 @@
 package pl.kamfonik.bytheway.mock;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -18,16 +19,12 @@ import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/mock")
 public class MockController {
 
     private final ByTheWayProperties byTheWayProperties;
     private final PlaceService placeService;
-
-    public MockController(ByTheWayProperties byTheWayProperties, PlaceService placeService) {
-        this.byTheWayProperties = byTheWayProperties;
-        this.placeService = placeService;
-    }
 
     @GetMapping
     public String home(){
