@@ -7,5 +7,5 @@ import pl.kamfonik.bytheway.entity.User;
 import java.util.List;
 
 public interface PlanRepository extends JpaRepository<Plan,Long> {
-    List<Plan> findByUserOrderByStartAsc(User user);
+    List<Plan> findByUserOrderByStartTimeAsc(User user);
 }

@@ -14,7 +14,7 @@ public class PlanServiceDB implements PlanService{
     private final PlanRepository planRepository;
 
     public List<Plan> findUserPlans(User user){
-        return planRepository.findByUserOrderByStartAsc(user);
+        return planRepository.findByUserOrderByStartTimeAsc(user);
     }
 
     public List<Plan> findAllPlans(){

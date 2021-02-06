@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
     <title>ByTheWay</title>
@@ -18,8 +19,8 @@
             <tr>
                 <td>${index.count}</td>
                 <td>${plan.trip.name}</td>
-                <td>${plan.start}</td>
-                <td>${plan.end}</td>
+                <td>${plan.startTime}</td>
+                <td>${plan.endTime}</td>
                 <td><form action="<c:url value="/app/delete/${plan.id}"/>" method="post">
                     <input type="submit" value="Delete">
                 </form></td>
@@ -56,7 +57,12 @@
 <form method="get" action="<c:url value="/app/addTrip"/>">
     <div><input type="submit" value="Add trip"></div>
 </form>
-
 <%@include file="../login/loggedAs.jspf" %>
+
+<sec:authorize access="hasRole('ADMIN')">
+    <form action="<c:url value="/app/initialize"/>" method="get">
+        <input class="fa fa-id-badge" type="submit" value="Initialize App Data">
+    </form>
+</sec:authorize>
 </body>
 </html>

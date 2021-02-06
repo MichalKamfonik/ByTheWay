@@ -58,4 +58,13 @@ public class AppController {
         log.debug(model.getAttribute("newTrip").toString());
         return "redirect:/app";
     }
+
+    @GetMapping("/initialize")
+    public String initializeCategories(@AuthenticationPrincipal CurrentUser user){
+        if(user.getUser().getRoles().stream()
+                .anyMatch(r->"ROLE_ADMIN".equals(r.getName()))){
+            categoryService.initialize();
+        }
+        return "redirect:/app";
+    }
 }

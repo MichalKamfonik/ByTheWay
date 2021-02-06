@@ -18,6 +18,6 @@ public class Plan {
     @ManyToOne
     @JoinColumn(name = "trip_id")
     private Trip trip;
-    private LocalDateTime start;
-    private LocalDateTime end;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 }
