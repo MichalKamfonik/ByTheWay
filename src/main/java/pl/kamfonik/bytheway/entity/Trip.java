@@ -3,7 +3,7 @@ package pl.kamfonik.bytheway.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Set;
 
 @Entity
@@ -13,7 +13,7 @@ public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Duration duration;
+    private Integer duration;
     private String name;
     @ManyToOne
     @JoinColumn(name = "origin_id")
@@ -23,4 +23,6 @@ public class Trip {
     private Place destination;
     @OneToMany
     private Set<Activity> activities;
+    private LocalTime departure;
+    private LocalTime arrival;
 }

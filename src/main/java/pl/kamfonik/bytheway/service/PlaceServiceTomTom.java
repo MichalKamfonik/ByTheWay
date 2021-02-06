@@ -37,13 +37,13 @@ public class PlaceServiceTomTom implements PlaceService {
                 .map(result -> {
                     Place place = new Place();
                     place.setId(result.getId());
-                    place.setName(result.getPoiDto().getName());
-                    place.setAddress(result.getAddressDto().getFreeformAddress());
-                    place.setLat(result.getPositionDto().getLat());
-                    place.setLon(result.getPositionDto().getLon());
+                    place.setName(result.getPoi().getName());
+                    place.setAddress(result.getAddress().getFreeformAddress());
+                    place.setLat(result.getPosition().getLat());
+                    place.setLon(result.getPosition().getLon());
                     place.setCategories(categoryService
                             .findCategoriesWithIds(
-                                    result.getPoiDto()
+                                    result.getPoi()
                                             .getCategorySet()
                                             .stream()
                                             .map(PoiCategoryDto::getId)

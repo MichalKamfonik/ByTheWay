@@ -8,10 +8,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SearchResultDto {
     private String id;
-    @JsonProperty("poi")
-    private PoiDto poiDto;
-    @JsonProperty("address")
-    private AddressDto addressDto;
-    @JsonProperty("position")
-    private PositionDto positionDto;
+    private PoiDto poi;
+    private AddressDto address;
+    private PositionDto position;
 }

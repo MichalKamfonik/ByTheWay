@@ -6,7 +6,7 @@
     <title>Add trip</title>
 </head>
 <body>
-<form:form modelAttribute="newTrip" method="post">
+<form:form modelAttribute="trip" method="post">
     <div>
         Duration [days]:
         <form:select path="duration">
@@ -25,6 +25,14 @@
     <div>
         Destination:
         <form:input path="destination"/>
+    </div>
+    <div>
+        Departure time (1st day) [HH:MM]:
+        <form:input path="departure"/>
+    </div>
+    <div>
+        Comeback time (last day) [HH:MM]:
+        <form:input path="arrival"/>
     </div>
     <div><input type="submit"></div>
 </form:form>

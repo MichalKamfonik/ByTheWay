@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class ByTheWayProperties {
     private final Category category = new Category();
     private final SearchPOI searchPOI = new SearchPOI();
+    private final Routing routing = new Routing();
     @Getter
     @Setter
     @ToString
@@ -23,6 +24,12 @@ public class ByTheWayProperties {
     @Setter
     @ToString
     public static class SearchPOI {
+        private String apikey;
+    }
+    @Getter
+    @Setter
+    @ToString
+    public static class Routing {
         private String apikey;
     }
 }
