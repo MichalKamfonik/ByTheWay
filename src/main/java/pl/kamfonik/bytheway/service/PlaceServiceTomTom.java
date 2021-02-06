@@ -47,6 +47,8 @@ public class PlaceServiceTomTom implements PlaceService {
                                             .getCategorySet()
                                             .stream()
                                             .map(PoiCategoryDto::getId)
+                                            .map(id->id.toString().substring(0,4))
+                                            .map(Long::parseLong)
                                             .collect(Collectors.toList())
                             ));
                     return place;
