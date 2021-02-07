@@ -6,13 +6,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.entity.Trip;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.security.CurrentUser;
-import pl.kamfonik.bytheway.service.CategoryService;
-import pl.kamfonik.bytheway.service.PlanService;
-import pl.kamfonik.bytheway.service.RouteService;
-import pl.kamfonik.bytheway.service.UserService;
+import pl.kamfonik.bytheway.service.*;
+
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -23,6 +23,7 @@ public class AppController {
     private final CategoryService categoryService;
     private final UserService userService;
     private final RouteService routeService;
+    private final PlaceService placeService;
 
     @GetMapping("/initialize")
     public String initializeCategories(@AuthenticationPrincipal CurrentUser user) {
@@ -63,11 +64,19 @@ public class AppController {
     }
 
     @PostMapping("/addTrip1")
-    public String addTrip1(@ModelAttribute Trip trip, Model model) {
+    public String addTrip1(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user) {
         model.addAttribute("trip", trip);
 
-        int travelTime = routeService.calculateRouteTime(trip.getOrigin(), trip.getDestination()) / 60;
-        model.addAttribute("travelTime", travelTime);
+        int travelTime = routeService.calculateRouteTime(trip.getOrigin(), trip.getDestination());
+        model.addAttribute("travelTime", travelTime / 60); // in minutes
+
+        List<Place> alongRoute = placeService.findAlongRoute(
+                trip.getOrigin(),
+                trip.getDestination(),
+                travelTime,
+                user.getUser().getFavoriteCategories());
+
+        model.addAttribute("alongRoute",alongRoute);
 
         return "/app/addTrip2";
     }
