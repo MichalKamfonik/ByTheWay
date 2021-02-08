@@ -35,7 +35,7 @@
     </tr>
 </table>
 <h2>Places along route</h2>
-<form:form modelAttribute="trip" method="post" action="/app/ad-trip2">
+<form:form modelAttribute="trip" method="post" action="/app/add-trip2">
     <form:checkboxes path="activities" items="${alongRoute}" itemValue="id" delimiter="<br>"/>
     <div><input type="submit"></div>
 </form:form>
