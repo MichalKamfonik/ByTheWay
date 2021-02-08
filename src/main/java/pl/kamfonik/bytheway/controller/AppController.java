@@ -57,13 +57,13 @@ public class AppController {
         return "redirect:/app";
     }
 
-    @GetMapping("/addTrip1")
+    @GetMapping("/add-trip1")
     public String addTripForm1(Model model) {
         model.addAttribute("trip", new Trip());
         return "app/addTrip1";
     }
 
-    @PostMapping("/addTrip1")
+    @PostMapping("/add-trip1")
     public String addTrip1(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user) {
         model.addAttribute("trip", trip);
 
@@ -79,5 +79,10 @@ public class AppController {
         model.addAttribute("alongRoute",alongRoute);
 
         return "/app/addTrip2";
+    }
+
+    @PostMapping("/add-trip2")
+    public String addTrip2(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user){
+        return null;
     }
 }

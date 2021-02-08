@@ -35,26 +35,8 @@
     </tr>
 </table>
 <h2>Places along route</h2>
-<table>
-    <tr>
-        <th>Position</th>
-        <th>Name</th>
-        <th>Address</th>
-        <th>Categories</th>
-        <th>Action</th>
-    </tr>
-    <c:forEach items="${alongRoute}" var="place" varStatus="index">
-        <tr>
-            <td>${index.count}</td>
-            <td>${place.name}</td>
-            <td>${place.address}</td>
-            <td>${place.categories}</td>
-            <td>TO BE DONE</td>
-        </tr>
-    </c:forEach>
-</table>
-
-<form:form modelAttribute="trip" method="post" action="/app/addTrip2">
+<form:form modelAttribute="trip" method="post" action="/app/ad-trip2">
+    <form:checkboxes path="activities" items="${alongRoute}" itemValue="id" delimiter="<br>"/>
     <div><input type="submit"></div>
 </form:form>
 </body>

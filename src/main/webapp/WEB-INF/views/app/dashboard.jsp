@@ -50,11 +50,11 @@
     </table>
 </div>
 <h2></h2>
-<form method="get" action="<c:url value="/app/addPlan"/>">
+<form method="get" action="<c:url value="/app/add-plan"/>">
     <div><input type="submit" value="Add plan"></div>
 </form>
 <h2></h2>
-<form method="get" action="<c:url value="/app/addTrip1"/>">
+<form method="get" action="<c:url value="/app/add-trip1"/>">
     <div><input type="submit" value="Add trip"></div>
 </form>
 <%@include file="../login/loggedAs.jspf" %>
