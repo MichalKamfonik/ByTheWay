@@ -33,7 +33,8 @@ public class PlaceServiceTomTom implements PlaceService {
 
     private static final String TOMTOM_SEARCH_POI_API_URL =
             "https://api.tomtom.com/search/2/poiSearch/__QUERY__.json?typeahead=true&countrySet=PL&key=";
-
+    private static final String TOMTOM_GET_POI_BY_ID_API_URL =
+            "https://api.tomtom.com/search/2/place.json?entityId=__ID__&key=";
     private static final String TOMTOM_SEARCH_ALONG_ROUTE_API_URL =
             "https://api.tomtom.com/search/2/searchAlongRoute/%20.json" +
                     "?maxDetourTime=__MAX_DETOUR_TIME__" +
@@ -58,6 +59,22 @@ public class PlaceServiceTomTom implements PlaceService {
         return forEntity.getBody().getResults().stream()
                 .map(this::searchResultsToPlaces)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Place findPlaceById(String id) {
+        String url = TOMTOM_GET_POI_BY_ID_API_URL.replace("__ID__", id)
+                + byTheWayProperties.getSearchPOI().getApikey();
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<SearchResultTableDto> forEntity = restTemplate.getForEntity(
+                url,
+                SearchResultTableDto.class
+        );
+
+        return forEntity.getBody().getResults().stream()
+                .map(this::searchResultsToPlaces)
+                .collect(Collectors.toList()).get(0);
     }
 
     @Override

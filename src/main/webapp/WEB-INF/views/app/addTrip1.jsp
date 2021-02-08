@@ -19,12 +19,16 @@
         <form:input path="name"/>
     </div>
     <div>
-        Origin:
-        <form:input path="origin"/>
+        <label>
+            Origin:
+            <input type="text" name="place1"/>
+        </label>
     </div>
     <div>
-        Destination:
-        <form:input path="destination"/>
+        <label>
+            Destination:
+            <input type="text" name="place2"/>
+        </label>
     </div>
     <div>
         Departure time (1st day) [HH:MM]:

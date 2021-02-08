@@ -64,7 +64,10 @@ public class AppController {
     }
 
     @PostMapping("/add-trip1")
-    public String addTrip1(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user) {
+    public String addTrip1(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user,
+                           @RequestParam String place1, @RequestParam String place2) {
+        trip.setOrigin(placeService.findPlaces(place1).get(0));
+        trip.setDestination(placeService.findPlaces(place2).get(0));
         model.addAttribute("trip", trip);
 
         int travelTime = routeService.calculateRouteTime(trip.getOrigin(), trip.getDestination());
@@ -82,7 +85,8 @@ public class AppController {
     }
 
     @PostMapping("/add-trip2")
-    public String addTrip2(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user){
-        return null;
+    @ResponseBody
+    public Trip addTrip2(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user){
+        return trip;
     }
 }
