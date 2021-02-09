@@ -45,7 +45,7 @@ public class MockController {
     @GetMapping("/trip/{query}")
     @ResponseBody
     public List<String> tripQuery(@PathVariable String query){
-        placeService.findPlaces(query).forEach(place-> log.debug(place.toString()));
-        return placeService.findPlaces(query).stream().map(Place::toString).collect(Collectors.toList());
+        placeService.findPlacesByQuery(query).forEach(place-> log.debug(place.toString()));
+        return placeService.findPlacesByQuery(query).stream().map(Place::toString).collect(Collectors.toList());
     }
 }

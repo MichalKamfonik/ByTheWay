@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface PlaceService {
-    List<Place> findPlaces(String query);
+    List<Place> findPlacesByQuery(String query);
     Place findPlaceById(String id);
     List<Place> findAlongRoute(Place origin, Place destination, Integer travelTime, Set<Category> categories);
 }

@@ -46,7 +46,7 @@ public class PlaceServiceTomTom implements PlaceService {
                     "&key=";
 
     @Override
-    public List<Place> findPlaces(String query) {
+    public List<Place> findPlacesByQuery(String query) {
         String url = TOMTOM_SEARCH_POI_API_URL.replace("__QUERY__", query)
                 + byTheWayProperties.getSearchPOI().getApikey();
 

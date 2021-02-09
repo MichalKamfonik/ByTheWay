@@ -24,6 +24,7 @@ public class AppController {
     private final UserService userService;
     private final RouteService routeService;
     private final PlaceService placeService;
+    private final TripService tripService;
 
     @GetMapping("/initialize")
     public String initializeCategories(@AuthenticationPrincipal CurrentUser user) {
@@ -66,27 +67,29 @@ public class AppController {
     @PostMapping("/add-trip1")
     public String addTrip1(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user,
                            @RequestParam String place1, @RequestParam String place2) {
-        trip.setOrigin(placeService.findPlaces(place1).get(0));
-        trip.setDestination(placeService.findPlaces(place2).get(0));
+
+        Place origin = placeService.findPlacesByQuery(place1).get(0);
+        Place destination = placeService.findPlacesByQuery(place2).get(0);
+        int travelTime = routeService.calculateRouteTime(origin, destination) / 60; // in minutes
+
+        trip = tripService.initialize(trip, origin, destination, travelTime);
+
         model.addAttribute("trip", trip);
 
-        int travelTime = routeService.calculateRouteTime(trip.getOrigin(), trip.getDestination());
-        model.addAttribute("travelTime", travelTime / 60); // in minutes
-
-        List<Place> alongRoute = placeService.findAlongRoute(
-                trip.getOrigin(),
-                trip.getDestination(),
-                travelTime,
+        List<Place> alongRoute = placeService.findAlongRoute(origin, destination, travelTime*60,
                 user.getUser().getFavoriteCategories());
 
-        model.addAttribute("alongRoute",alongRoute);
+        model.addAttribute("alongRoute", alongRoute);
 
         return "/app/addTrip2";
     }
 
     @PostMapping("/add-trip2")
     @ResponseBody
-    public Trip addTrip2(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user){
-        return trip;
+    public Trip addTrip2(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user) {
+        Trip forUpdate = tripService.findTripById(trip.getId());
+        forUpdate.getActivities().addAll(1,trip.getActivities());
+
+        return forUpdate;
     }
 }
