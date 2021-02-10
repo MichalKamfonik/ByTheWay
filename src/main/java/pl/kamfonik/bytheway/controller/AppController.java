@@ -87,6 +87,8 @@ public class AppController {
 
         model.addAttribute("alongRoute", alongRoute);
 
+        log.debug("Attribute added!!!");
+
         return "/app/addTrip2";
     }
 
