@@ -76,10 +76,14 @@ public class AppController {
 
         trip = tripService.initialize(trip, origin, destination, travelTime);
 
+        log.debug("Initialize trip succeeded!!, trip={}",trip);
+
         model.addAttribute("trip", trip);
 
         List<Place> alongRoute = placeService.findAlongRoute(origin, destination, travelTime*60,
                 user.getUser().getFavoriteCategories());
+
+        log.debug("Along Route succeeded!!, alongRoute={}",alongRoute);
 
         model.addAttribute("alongRoute", alongRoute);
 
