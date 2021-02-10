@@ -1,7 +1,6 @@
 package pl.kamfonik.bytheway.entity;
 
 import lombok.Data;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.time.LocalTime;
@@ -16,8 +15,7 @@ public class Trip {
     private Long id;
     private Integer duration;
     private String name;
-    @OneToMany()
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Activity> activities;
     private LocalTime departure;
     private LocalTime arrival;

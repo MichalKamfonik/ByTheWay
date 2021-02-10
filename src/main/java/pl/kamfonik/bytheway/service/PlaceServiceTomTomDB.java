@@ -16,25 +16,32 @@ import pl.kamfonik.bytheway.dto.SearchResultDto;
 import pl.kamfonik.bytheway.dto.SearchResultTableDto;
 import pl.kamfonik.bytheway.entity.Category;
 import pl.kamfonik.bytheway.entity.Place;
+import pl.kamfonik.bytheway.repository.PlaceRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class PlaceServiceTomTom implements PlaceService {
+public class PlaceServiceTomTomDB implements PlaceService {
 
     private final CategoryService categoryService;
     private final ByTheWayProperties byTheWayProperties;
+    private final PlaceRepository placeRepository;
 
     private static final Integer MAX_DETOUR_PROCENT = 25;
 
     private static final String TOMTOM_SEARCH_POI_API_URL =
-            "https://api.tomtom.com/search/2/poiSearch/__QUERY__.json?typeahead=true&countrySet=PL&key=";
+            "https://api.tomtom.com/search/2/poiSearch/__QUERY__.json" +
+                    "?typeahead=true" +
+                    "&limit=1" +
+                    "&countrySet=PL&key=";
     private static final String TOMTOM_GET_POI_BY_ID_API_URL =
-            "https://api.tomtom.com/search/2/place.json?entityId=__ID__&key=";
+            "https://api.tomtom.com/search/2/place.json" +
+                    "?entityId=__ID__&key=";
     private static final String TOMTOM_SEARCH_ALONG_ROUTE_API_URL =
             "https://api.tomtom.com/search/2/searchAlongRoute/%20.json" +
                     "?maxDetourTime=__MAX_DETOUR_TIME__" +
@@ -46,7 +53,7 @@ public class PlaceServiceTomTom implements PlaceService {
                     "&key=";
 
     @Override
-    public List<Place> findPlacesByQuery(String query) {
+    public Place findPlaceByQuery(String query) {
         String url = TOMTOM_SEARCH_POI_API_URL.replace("__QUERY__", query)
                 + byTheWayProperties.getSearchPOI().getApikey();
 
@@ -57,12 +64,19 @@ public class PlaceServiceTomTom implements PlaceService {
         );
 
         return forEntity.getBody().getResults().stream()
-                .map(this::searchResultsToPlaces)
-                .collect(Collectors.toList());
+                .map(SearchResultDto::getId)
+                .map(this::findPlaceById)
+                .findAny().orElseThrow();
     }
 
     @Override
     public Place findPlaceById(String id) {
+
+        Optional<Place> byId = placeRepository.findById(id);
+        if(byId.isPresent()){
+            return byId.get();
+        }
+
         String url = TOMTOM_GET_POI_BY_ID_API_URL.replace("__ID__", id)
                 + byTheWayProperties.getSearchPOI().getApikey();
 
@@ -95,8 +109,19 @@ public class PlaceServiceTomTom implements PlaceService {
                 SearchAlongRouteResultTableDto.class);
 
         return forEntity.getBody().getResults().stream()
-                .map(this::searchResultsToPlaces)
+                .map(SearchResultDto::getId)
+                .map(this::findPlaceById)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Place save(Place place) {
+        return placeRepository.save(place);
+    }
+
+    @Override
+    public List<Place> saveAll(List<Place> places) {
+        return placeRepository.saveAll(places);
     }
 
     private String getUrl(Integer travelTime, Set<Category> categories) {

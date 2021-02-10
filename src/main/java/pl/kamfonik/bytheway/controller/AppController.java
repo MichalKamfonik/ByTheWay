@@ -68,8 +68,8 @@ public class AppController {
     public String addTrip1(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user,
                            @RequestParam String place1, @RequestParam String place2) {
 
-        Place origin = placeService.findPlacesByQuery(place1).get(0);
-        Place destination = placeService.findPlacesByQuery(place2).get(0);
+        Place origin = placeService.findPlaceByQuery(place1);
+        Place destination = placeService.findPlaceByQuery(place2);
         int travelTime = routeService.calculateRouteTime(origin, destination) / 60; // in minutes
 
         trip = tripService.initialize(trip, origin, destination, travelTime);

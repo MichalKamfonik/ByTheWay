@@ -2,7 +2,6 @@ package pl.kamfonik.bytheway.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.time.LocalTime;
@@ -16,9 +15,8 @@ public class Activity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(name = "place_id")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Place place;
     private Integer duration;
     private LocalTime arrival;
