@@ -18,7 +18,9 @@
             <td>${s.index * 2 + 1}</td>
             <td>${activity.arrival} - ${activity.departure}</td>
             <td>"${activity.place.name}
-                <c:if test="${not empty activity.description}">
+                <c:if test="${not empty activity.description
+                && not activity.description == '__ORIGIN__'
+                && not activity.description == '__DESTINATION__'}">}">
                     - ${activity.description}
                 </c:if>"</td>
         </tr>
@@ -36,10 +38,6 @@
     <form:checkboxes path="activities" items="${alongRoute}" itemLabel="name" itemValue="id" delimiter="<br>"/>
     <div><input type="submit"></div>
     <form:hidden path="id"/>
-    <form:hidden path="duration"/>
-    <form:hidden path="name"/>
-    <form:hidden path="departure"/>
-    <form:hidden path="arrival"/>
 </form:form>
 </body>
 </html>

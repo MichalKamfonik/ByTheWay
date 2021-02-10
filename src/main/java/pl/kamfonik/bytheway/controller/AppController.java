@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import pl.kamfonik.bytheway.entity.Activity;
 import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.entity.Trip;
 import pl.kamfonik.bytheway.entity.User;
@@ -13,6 +14,7 @@ import pl.kamfonik.bytheway.security.CurrentUser;
 import pl.kamfonik.bytheway.service.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -85,11 +87,38 @@ public class AppController {
     }
 
     @PostMapping("/add-trip2")
-    @ResponseBody
-    public Trip addTrip2(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user) {
+    public String addTrip2(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user) {
         Trip forUpdate = tripService.findTripById(trip.getId());
         forUpdate.getActivities().addAll(1,trip.getActivities());
+        List<Activity> activities = forUpdate.getActivities();
 
+        for(int i=1; i<activities.size(); i++){
+            Activity current = activities.get(i);
+            Activity previous = activities.get(i-1);
+            current.setArrival(previous.getDeparture()
+                    .plusMinutes(routeService.calculateRouteTime(previous.getPlace(), current.getPlace())/60));
+            current.setDeparture(current.getArrival()); // no duration yet
+        }
+
+        model.addAttribute("trip",forUpdate);
+        return "/app/addTrip3";
+    }
+
+    @PostMapping("/add-trip3")
+    @ResponseBody
+    public Trip addTrip3(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user) {
+        Trip forUpdate = tripService.findTripById(trip.getId());
+
+        log.debug("forUpdate = {}", forUpdate);
+        log.debug("trip = {}", trip);
+
+        forUpdate.getActivities().addAll(1,
+                trip.getActivities().stream()
+                        .filter(a->!"__ORIGIN__".equals(a.getDescription()) && !"__DESTINATION__".equals(a.getDescription()))
+                        .collect(Collectors.toList()));
+
+//        model.addAttribute("trip",forUpdate);
+//        return "/app/addTrip3";
         return forUpdate;
     }
 }
