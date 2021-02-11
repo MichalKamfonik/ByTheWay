@@ -33,6 +33,7 @@ public class PlaceServiceTomTomDB implements PlaceService {
     private final PlaceRepository placeRepository;
 
     private static final Integer MAX_DETOUR_PROCENT = 25;
+    private static final Integer SLEEP_MS_IF_429 = 100;
 
     private static final String TOMTOM_SEARCH_POI_API_URL =
             "https://api.tomtom.com/search/2/poiSearch/__QUERY__.json" +
@@ -73,7 +74,7 @@ public class PlaceServiceTomTomDB implements PlaceService {
     private ResponseEntity<SearchResultTableDto> tryAgainIfTooManyQPS(String url, RestTemplate restTemplate, ResponseEntity<SearchResultTableDto> forEntity) {
         if (forEntity.getStatusCodeValue() == 429) {
             try {
-                Thread.sleep(50);
+                Thread.sleep(SLEEP_MS_IF_429);
             } catch (InterruptedException e) {
                 log.error("Sleep interrupted");
             }
@@ -124,7 +125,7 @@ public class PlaceServiceTomTomDB implements PlaceService {
         );
         if(forEntity.getStatusCodeValue() == 429){
             try {
-                Thread.sleep(50);
+                Thread.sleep(SLEEP_MS_IF_429);
             } catch (InterruptedException e) {
                 log.error("Sleep interrupted");
             }
