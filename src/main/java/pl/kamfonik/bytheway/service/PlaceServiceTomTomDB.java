@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import pl.kamfonik.bytheway.ByTheWayProperties;
 import pl.kamfonik.bytheway.dto.PoiCategoryDto;
@@ -31,7 +30,6 @@ public class PlaceServiceTomTomDB implements PlaceService {
     private final PlaceRepository placeRepository;
 
     private static final Integer MAX_DETOUR_PROCENT = 25;
-    private static final Integer SLEEP_MS_IF_429 = 100;
 
     private static final String TOMTOM_SEARCH_POI_API_URL =
             "https://api.tomtom.com/search/2/poiSearch/__QUERY__.json" +
@@ -52,39 +50,6 @@ public class PlaceServiceTomTomDB implements PlaceService {
                     "&key=";
 
     @Override
-    public Place findPlaceByQuery(String query) {
-        String url = TOMTOM_SEARCH_POI_API_URL.replace("__QUERY__", query)
-                + byTheWayProperties.getSearchPOI().getApikey();
-
-        ResponseEntity<SearchResultTableDto> forEntity = tryToGetForEntity(url);
-
-        return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
-                .map(SearchResultDto::getId)
-                .map(this::findPlaceById)
-                .findAny().orElseThrow();
-    }
-
-    private ResponseEntity<SearchResultTableDto> tryToGetForEntity(String url) {
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<SearchResultTableDto> forEntity;
-        try {
-            forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode().equals(HttpStatus.TOO_MANY_REQUESTS)) {
-                try {
-                    Thread.sleep(SLEEP_MS_IF_429);
-                } catch (InterruptedException ex) {
-                    log.error("Sleep interrupted"); // log and ignore
-                }
-                forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
-            } else {
-                throw e;
-            }
-        }
-        return forEntity;
-    }
-
-    @Override
     public Place findPlaceById(String id) {
 
         Optional<Place> byId = placeRepository.findById(id);
@@ -95,11 +60,27 @@ public class PlaceServiceTomTomDB implements PlaceService {
         String url = TOMTOM_GET_POI_BY_ID_API_URL.replace("__ID__", id)
                 + byTheWayProperties.getSearchPOI().getApikey();
 
-        ResponseEntity<SearchResultTableDto> forEntity = tryToGetForEntity(url);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<SearchResultTableDto> forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
 
-        return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
+        return save(Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(this::searchResultsToPlaces)
-                .collect(Collectors.toList()).get(0);
+                .collect(Collectors.toList()).get(0));
+    }
+
+    @Override
+    public Place findPlaceByQuery(String query) {
+        String url = TOMTOM_SEARCH_POI_API_URL.replace("__QUERY__", query)
+                + byTheWayProperties.getSearchPOI().getApikey();
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<SearchResultTableDto> forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
+
+        return save(Objects.requireNonNull(forEntity.getBody()).getResults().stream()
+                .map(SearchResultDto::getId)
+                .map(this::findPlaceById)
+                .collect(Collectors.toList())
+                .get(0));
     }
 
     @Override
@@ -120,10 +101,10 @@ public class PlaceServiceTomTomDB implements PlaceService {
                 SearchResultTableDto.class
         );
 
-        return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
+        return saveAll(Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(SearchResultDto::getId)
                 .map(this::findPlaceById)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
