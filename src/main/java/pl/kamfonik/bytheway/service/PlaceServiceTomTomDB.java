@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.kamfonik.bytheway.ByTheWayProperties;
 import pl.kamfonik.bytheway.dto.PoiCategoryDto;
-import pl.kamfonik.bytheway.dto.SearchAlongRouteResultTableDto;
 import pl.kamfonik.bytheway.dto.SearchResultDto;
 import pl.kamfonik.bytheway.dto.SearchResultTableDto;
 import pl.kamfonik.bytheway.entity.Category;
@@ -19,6 +18,7 @@ import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.repository.PlaceRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -62,11 +62,24 @@ public class PlaceServiceTomTomDB implements PlaceService {
                 url,
                 SearchResultTableDto.class
         );
+        forEntity = tryAgainIfTooManyQPS(url, restTemplate, forEntity);
 
-        return forEntity.getBody().getResults().stream()
+        return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(SearchResultDto::getId)
                 .map(this::findPlaceById)
                 .findAny().orElseThrow();
+    }
+
+    private ResponseEntity<SearchResultTableDto> tryAgainIfTooManyQPS(String url, RestTemplate restTemplate, ResponseEntity<SearchResultTableDto> forEntity) {
+        if (forEntity.getStatusCodeValue() == 429) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                log.error("Sleep interrupted");
+            }
+            forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
+        }
+        return forEntity;
     }
 
     @Override
@@ -85,8 +98,9 @@ public class PlaceServiceTomTomDB implements PlaceService {
                 url,
                 SearchResultTableDto.class
         );
+        forEntity = tryAgainIfTooManyQPS(url, restTemplate, forEntity);
 
-        return forEntity.getBody().getResults().stream()
+        return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(this::searchResultsToPlaces)
                 .collect(Collectors.toList()).get(0);
     }
@@ -103,12 +117,21 @@ public class PlaceServiceTomTomDB implements PlaceService {
         HttpEntity<String> request = new HttpEntity<>(routeToSend.toString(), headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<SearchAlongRouteResultTableDto> forEntity = restTemplate.postForEntity(
+        ResponseEntity<SearchResultTableDto> forEntity = restTemplate.postForEntity(
                 url,
                 request,
-                SearchAlongRouteResultTableDto.class);
+                SearchResultTableDto.class
+        );
+        if(forEntity.getStatusCodeValue() == 429){
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                log.error("Sleep interrupted");
+            }
+            forEntity = restTemplate.postForEntity(url,request,SearchResultTableDto.class);
+        }
 
-        return forEntity.getBody().getResults().stream()
+        return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(SearchResultDto::getId)
                 .map(this::findPlaceById)
                 .collect(Collectors.toList());
