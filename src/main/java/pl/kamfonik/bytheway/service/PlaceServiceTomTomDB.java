@@ -3,11 +3,9 @@ package pl.kamfonik.bytheway.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import pl.kamfonik.bytheway.ByTheWayProperties;
 import pl.kamfonik.bytheway.dto.PoiCategoryDto;
@@ -33,7 +31,7 @@ public class PlaceServiceTomTomDB implements PlaceService {
     private final PlaceRepository placeRepository;
 
     private static final Integer MAX_DETOUR_PROCENT = 25;
-    private static final Integer SLEEP_MS_IF_429 = 500;
+    private static final Integer SLEEP_MS_IF_429 = 50;
 
     private static final String TOMTOM_SEARCH_POI_API_URL =
             "https://api.tomtom.com/search/2/poiSearch/__QUERY__.json" +
@@ -58,12 +56,7 @@ public class PlaceServiceTomTomDB implements PlaceService {
         String url = TOMTOM_SEARCH_POI_API_URL.replace("__QUERY__", query)
                 + byTheWayProperties.getSearchPOI().getApikey();
 
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<SearchResultTableDto> forEntity = restTemplate.getForEntity(
-                url,
-                SearchResultTableDto.class
-        );
-        forEntity = tryAgainIfTooManyQPS(url, restTemplate, forEntity);
+        ResponseEntity<SearchResultTableDto> forEntity = tryToGetForEntity(url);
 
         return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(SearchResultDto::getId)
@@ -71,14 +64,22 @@ public class PlaceServiceTomTomDB implements PlaceService {
                 .findAny().orElseThrow();
     }
 
-    private ResponseEntity<SearchResultTableDto> tryAgainIfTooManyQPS(String url, RestTemplate restTemplate, ResponseEntity<SearchResultTableDto> forEntity) {
-        if (forEntity.getStatusCodeValue() == 429) {
-            try {
-                Thread.sleep(SLEEP_MS_IF_429);
-            } catch (InterruptedException e) {
-                log.error("Sleep interrupted");
-            }
+    private ResponseEntity<SearchResultTableDto> tryToGetForEntity(String url) {
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<SearchResultTableDto> forEntity;
+        try {
             forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().equals(HttpStatus.TOO_MANY_REQUESTS)) {
+                try {
+                    Thread.sleep(SLEEP_MS_IF_429);
+                } catch (InterruptedException ex) {
+                    log.error("Sleep interrupted"); // log and ignore
+                }
+                forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
+            } else {
+                throw e;
+            }
         }
         return forEntity;
     }
@@ -87,19 +88,14 @@ public class PlaceServiceTomTomDB implements PlaceService {
     public Place findPlaceById(String id) {
 
         Optional<Place> byId = placeRepository.findById(id);
-        if(byId.isPresent()){
+        if (byId.isPresent()) {
             return byId.get();
         }
 
         String url = TOMTOM_GET_POI_BY_ID_API_URL.replace("__ID__", id)
                 + byTheWayProperties.getSearchPOI().getApikey();
 
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<SearchResultTableDto> forEntity = restTemplate.getForEntity(
-                url,
-                SearchResultTableDto.class
-        );
-        forEntity = tryAgainIfTooManyQPS(url, restTemplate, forEntity);
+        ResponseEntity<SearchResultTableDto> forEntity = tryToGetForEntity(url);
 
         return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(this::searchResultsToPlaces)
@@ -123,14 +119,6 @@ public class PlaceServiceTomTomDB implements PlaceService {
                 request,
                 SearchResultTableDto.class
         );
-        if(forEntity.getStatusCodeValue() == 429){
-            try {
-                Thread.sleep(SLEEP_MS_IF_429);
-            } catch (InterruptedException e) {
-                log.error("Sleep interrupted");
-            }
-            forEntity = restTemplate.postForEntity(url,request,SearchResultTableDto.class);
-        }
 
         return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(SearchResultDto::getId)
@@ -150,7 +138,7 @@ public class PlaceServiceTomTomDB implements PlaceService {
 
     private String getUrl(Integer travelTime, Set<Category> categories) {
         Integer maxDetourInt = travelTime * MAX_DETOUR_PROCENT / 100;
-        if(maxDetourInt > 3600){
+        if (maxDetourInt > 3600) {
             maxDetourInt = 3600;
         }
         String maxDetourTime = String.valueOf(maxDetourInt);
