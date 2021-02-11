@@ -31,7 +31,7 @@ public class PlaceServiceTomTomDB implements PlaceService {
     private final PlaceRepository placeRepository;
 
     private static final Integer MAX_DETOUR_PROCENT = 25;
-    private static final Integer SLEEP_MS_IF_429 = 50;
+    private static final Integer SLEEP_MS_IF_429 = 100;
 
     private static final String TOMTOM_SEARCH_POI_API_URL =
             "https://api.tomtom.com/search/2/poiSearch/__QUERY__.json" +
