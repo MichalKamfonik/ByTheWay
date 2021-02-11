@@ -3,15 +3,10 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
-    <title>
-        Add trip step
-        <c:if test="${direction = 'There'}"> 3 </c:if>
-        <c:if test="${direction = 'There'}"> 5 </c:if>
-    </title>
+    <title>Add trip summary</title>
 </head>
 <body>
 <h2>Schedule</h2>
-<form:form modelAttribute="trip" method="post" action="/app/add-trip3">
     <table border="1">
         <tr>
             <th>Position</th>
@@ -31,18 +26,6 @@
                         - ${activity.description}
                     </c:if>"
                 </td>
-                <c:if test="${not activity.description.equals('__ORIGIN__')
-                && not activity.description.equals('__DESTINATION__')
-                && s.index >= start}">
-                    <td><form:input path="activities[${s.index}].duration"/></td>
-                    <td><form:input path="activities[${s.index}].description"/></td>
-                </c:if>
-                <form:hidden path="activities[${s.index}].id"/>
-                <form:hidden path="activities[${s.index}].place"/>
-                <form:hidden path="activities[${s.index}].duration"/>
-                <form:hidden path="activities[${s.index}].description"/>
-                <form:hidden path="activities[${s.index}].departure"/>
-                <form:hidden path="activities[${s.index}].arrival"/>
             </tr>
             <c:if test="${not s.last}">
                 <tr>
@@ -53,10 +36,8 @@
             </c:if>
         </c:forEach>
     </table>
-    <form:hidden path="id"/>
-    <input type="hidden" name="direction" value="${direction}">
-    <input type="hidden" name="start" value="${start}">
-    <input type="submit">
-</form:form>
+<form method="get" action="<c:url value="/app"/>">
+    <input type="submit" value="Back to dashboard">
+</form>
 </body>
 </html>

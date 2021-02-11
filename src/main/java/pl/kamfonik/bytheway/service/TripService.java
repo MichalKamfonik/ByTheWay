@@ -5,10 +5,13 @@ import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.entity.Trip;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TripService {
 
     default Trip initialize(Trip trip, Place origin, Place destination, Integer travelTime){
+
+        travelTime/=60; // to minutes
 
         int departureInMinutes = trip.getDeparture().getHour()*60 + trip.getDeparture().getMinute();
         int arrivalInMinutes = trip.getArrival().getHour()*60 + trip.getArrival().getMinute();
@@ -35,11 +38,11 @@ public interface TripService {
                 trip.getArrival(),
                 trip.getArrival()
         );
-
-        trip.setActivities(new ArrayList<>());
-        trip.getActivities().add(start);
-        trip.getActivities().add(goal);
-        trip.getActivities().add(end);
+        List<Activity> activities = new ArrayList<>();
+        activities.add(start);
+        activities.add(goal);
+        activities.add(end);
+        trip.setActivities(activities);
 
         return save(trip);
     }

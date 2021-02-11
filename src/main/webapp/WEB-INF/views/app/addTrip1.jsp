@@ -3,7 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
-    <title>Add trip</title>
+    <title>Add trip step 1</title>
 </head>
 <body>
 <form:form modelAttribute="trip" method="post">

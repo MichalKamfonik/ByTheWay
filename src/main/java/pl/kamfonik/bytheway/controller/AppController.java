@@ -67,64 +67,87 @@ public class AppController {
     }
 
     @PostMapping("/add-trip1")
-    public String addTrip1(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user,
-                           @RequestParam String place1, @RequestParam String place2) {
+    public String addTrip1(@ModelAttribute Trip trip,
+                           @AuthenticationPrincipal CurrentUser user,
+                           @RequestParam String place1,
+                           @RequestParam String place2,
+                           Model model) {
 
         Place origin = placeService.findPlaceByQuery(place1);
         Place destination = placeService.findPlaceByQuery(place2);
-        int travelTime = routeService.calculateRouteTime(origin, destination) / 60; // in minutes
+        int travelTime = routeService.calculateRouteTime(origin, destination);
 
         trip = tripService.initialize(trip, origin, destination, travelTime);
 
-        log.debug("Initialize trip succeeded!!, trip={}",trip);
-
         model.addAttribute("trip", trip);
 
-        List<Place> alongRoute = placeService.findAlongRoute(origin, destination, travelTime*60,
+        List<Place> alongRoute = placeService.findAlongRoute(origin, destination, travelTime,
                 user.getUser().getFavoriteCategories());
 
-        log.debug("Along Route succeeded!!, alongRoute={}",alongRoute);
-
         model.addAttribute("alongRoute", alongRoute);
-
-        log.debug("Attribute added!!!");
+        model.addAttribute("direction", "There");
 
         return "/app/addTrip2";
     }
 
     @PostMapping("/add-trip2")
-    public String addTrip2(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user) {
-        Trip forUpdate = tripService.findTripById(trip.getId());
-        forUpdate.getActivities().addAll(1,trip.getActivities());
-        List<Activity> activities = forUpdate.getActivities();
+    public String addTrip2(@ModelAttribute Trip trip,
+                           @RequestParam String direction,
+                           Model model) {
 
-        for(int i=1; i<activities.size(); i++){
+        Trip forUpdate = tripService.findTripById(trip.getId());
+        List<Activity> activities = forUpdate.getActivities();
+        int start;
+        if ("There".equals(direction)) {
+            start = 1;
+        } else { // "Back"
+            start = activities.size() - 1;
+        }
+        activities.addAll(start, trip.getActivities());
+
+        for (int i = start; i < activities.size(); i++) {
             Activity current = activities.get(i);
-            Activity previous = activities.get(i-1);
+            Activity previous = activities.get(i - 1);
             current.setArrival(previous.getDeparture()
-                    .plusMinutes(routeService.calculateRouteTime(previous.getPlace(), current.getPlace())/60));
+                    .plusMinutes(routeService.calculateRouteTime(previous.getPlace(), current.getPlace()) / 60));
             current.setDeparture(current.getArrival()); // no duration yet
         }
 
-        model.addAttribute("trip",forUpdate);
+        model.addAttribute("trip", forUpdate);
+        model.addAttribute("direction", direction);
+        model.addAttribute("start", start);
         return "/app/addTrip3";
     }
 
     @PostMapping("/add-trip3")
-    @ResponseBody
-    public Trip addTrip3(@ModelAttribute Trip trip, Model model, @AuthenticationPrincipal CurrentUser user) {
+    public String addTrip3(@ModelAttribute Trip trip,
+                         @RequestParam String direction,
+                         @RequestParam Integer start,
+                         @AuthenticationPrincipal CurrentUser user,
+                         Model model) {
         Trip forUpdate = tripService.findTripById(trip.getId());
 
-        log.debug("forUpdate = {}", forUpdate);
-        log.debug("trip = {}", trip);
-
-        forUpdate.getActivities().addAll(1,
+        forUpdate.getActivities().addAll(start,
                 trip.getActivities().stream()
-                        .filter(a->!"__ORIGIN__".equals(a.getDescription()) && !"__DESTINATION__".equals(a.getDescription()))
+                        .filter(a -> a.getId() == null)
+                        // This peek modifies stream elements
+                        .peek(a ->a.setDeparture(a.getArrival().plusMinutes(a.getDuration())))
                         .collect(Collectors.toList()));
+        forUpdate = tripService.save(forUpdate);
+        model.addAttribute("trip", forUpdate);
 
-//        model.addAttribute("trip",forUpdate);
-//        return "/app/addTrip3";
-        return forUpdate;
+        if("There".equals(direction)) {
+            List<Activity> activities = forUpdate.getActivities();
+            Place origin = activities.get(0).getPlace();
+            Place destination = activities.get(activities.size()-2).getPlace();
+            int travelTime = routeService.calculateRouteTime(destination,origin);
+            List<Place> alongRoute = placeService.findAlongRoute(destination,origin, travelTime,
+                    user.getUser().getFavoriteCategories());
+            model.addAttribute("alongRoute", alongRoute);
+            model.addAttribute("direction", "Back");
+            return "/app/addTrip2";
+        } else {
+            return "/app/addTrip4";
+        }
     }
 }
