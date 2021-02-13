@@ -73,7 +73,13 @@
 <form:form modelAttribute="trip" method="post" action="/app/add-trip2">
     <c:forEach items="${alongRoute}" var="place">
         <form:checkbox path="activities" value="${place.id}" label="${place.name}"/><br>
-        <small>Address: ${place.address}<br></small>
+        <small>
+            Address: ${place.address} Category:
+                <c:forEach items="${place.categories}" var="category" varStatus="s">
+                    ${category.name} <c:if test="${not s.last}">, </c:if>
+                </c:forEach>
+            <br>
+        </small>
     </c:forEach>
     <div><input type="submit"></div>
     <form:hidden path="id"/>
