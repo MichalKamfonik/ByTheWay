@@ -5,8 +5,8 @@
 <head>
     <title>
         Add trip step
-        <c:if test="${direction = 'There'}"> 2 </c:if>
-        <c:if test="${direction = 'There'}"> 4 </c:if>
+        <c:if test="${direction.equals('There')}"> 2 </c:if>
+        <c:if test="${direction.equals('Back')}"> 4 </c:if>
     </title>
 </head>
 <body>
@@ -16,18 +16,16 @@
         <th>Position</th>
         <th>Hour</th>
         <th>Name</th>
+        <th>Duration</th>
+        <th>Description</th>
     </tr>
     <c:forEach items="${trip.activities}" var="activity" varStatus="s">
         <tr>
             <td>${s.index * 2 + 1}</td>
             <td>${activity.arrival} - ${activity.departure}</td>
-            <td>"${activity.place.name}
-                <c:if test="${not empty activity.description
-                && not activity.description == '__ORIGIN__'
-                && not activity.description == '__DESTINATION__'}">}">
-                    - ${activity.description}
-                </c:if>"
-            </td>
+            <td>${activity.place.name}</td>
+            <td>${activity.duration}</td>
+            <td>${activity.description}</td>
         </tr>
         <c:if test="${not s.last}">
             <tr>
@@ -38,7 +36,7 @@
         </c:if>
     </c:forEach>
 </table>
-<h2>Add places along route "${direction}</h2>
+<h2>Add places along route ${direction}</h2>
 <form:form modelAttribute="trip" method="post" action="/app/add-trip2">
     <form:checkboxes path="activities" items="${alongRoute}" itemLabel="name" itemValue="id" delimiter="<br>"/>
     <div><input type="submit"></div>

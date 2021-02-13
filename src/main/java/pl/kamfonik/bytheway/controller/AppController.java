@@ -13,6 +13,7 @@ import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.security.CurrentUser;
 import pl.kamfonik.bytheway.service.*;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,13 +76,14 @@ public class AppController {
 
         Place origin = placeService.findPlaceByQuery(place1);
         Place destination = placeService.findPlaceByQuery(place2);
-        int travelTime = routeService.calculateRouteTime(origin, destination);
+        int travelTimeThere = routeService.calculateRouteTime(origin, destination);
+        int travelTimeBack = routeService.calculateRouteTime(destination, origin);
 
-        trip = tripService.initialize(trip, origin, destination, travelTime);
+        trip = tripService.initialize(trip, origin, destination, travelTimeThere, travelTimeBack);
 
         model.addAttribute("trip", trip);
 
-        List<Place> alongRoute = placeService.findAlongRoute(origin, destination, travelTime,
+        List<Place> alongRoute = placeService.findAlongRoute(origin, destination, travelTimeThere,
                 user.getUser().getFavoriteCategories());
 
         model.addAttribute("alongRoute", alongRoute);
@@ -97,20 +99,46 @@ public class AppController {
 
         Trip forUpdate = tripService.findTripById(trip.getId());
         List<Activity> activities = forUpdate.getActivities();
+        Activity destination;
         int start;
         if ("There".equals(direction)) {
             start = 1;
+            destination = activities.get(start);
         } else { // "Back"
             start = activities.size() - 1;
+            destination = activities.get(start - 1);
         }
+
         activities.addAll(start, trip.getActivities());
 
-        for (int i = start; i < activities.size(); i++) {
-            Activity current = activities.get(i);
-            Activity previous = activities.get(i - 1);
-            current.setArrival(previous.getDeparture()
-                    .plusMinutes(routeService.calculateRouteTime(previous.getPlace(), current.getPlace()) / 60));
-            current.setDeparture(current.getArrival()); // no duration yet
+        if ("There".equals(direction)) {
+            for (int i = start; i < activities.size() - 1; i++) {
+                Activity current = activities.get(i);
+                Activity previous = activities.get(i - 1);
+                current.setArrival(previous.getDeparture()
+                        .plusMinutes(routeService.calculateRouteTime(previous.getPlace(), current.getPlace()) / 60));
+                if (!destination.equals(current)) {
+                    current.setDeparture(current.getArrival()); // no duration yet
+                } else { // update time left for destination activity - departure is fixed for now
+                    current.setDuration(Long.valueOf(
+                            Duration.between(current.getArrival(), current.getDeparture()).toMinutes()
+                                    + (forUpdate.getDuration() - 1) * 24L * 60L).intValue());
+                }
+            }
+        } else { // Back
+            for (int i = activities.size() - 2; i >= start - 1; i--) {
+                Activity current = activities.get(i);
+                Activity next = activities.get(i + 1);
+                current.setDeparture(next.getArrival()
+                        .minusMinutes(routeService.calculateRouteTime(current.getPlace(), next.getPlace()) / 60));
+                if (!destination.equals(current)) {
+                    current.setArrival(current.getDeparture()); // no duration yet
+                } else { // update time left for destination activity - departure is fixed for now
+                    current.setDuration(Long.valueOf(
+                            Duration.between(current.getArrival(), current.getDeparture()).toMinutes()
+                                    + (forUpdate.getDuration() - 1) * 24L * 60L).intValue());
+                }
+            }
         }
 
         model.addAttribute("trip", forUpdate);
@@ -121,27 +149,65 @@ public class AppController {
 
     @PostMapping("/add-trip3")
     public String addTrip3(@ModelAttribute Trip trip,
-                         @RequestParam String direction,
-                         @RequestParam Integer start,
-                         @AuthenticationPrincipal CurrentUser user,
-                         Model model) {
+                           @RequestParam String direction,
+                           @RequestParam Integer start,
+                           @AuthenticationPrincipal CurrentUser user,
+                           Model model) {
         Trip forUpdate = tripService.findTripById(trip.getId());
 
-        forUpdate.getActivities().addAll(start,
-                trip.getActivities().stream()
+        List<Activity> activities = forUpdate.getActivities();
+        Activity destination;
+
+        List<Activity> activitiesFromView = trip.getActivities();
+
+        activities.addAll(start,activitiesFromView.stream()
                         .filter(a -> a.getId() == null)
-                        // This peek modifies stream elements
-                        .peek(a ->a.setDeparture(a.getArrival().plusMinutes(a.getDuration())))
                         .collect(Collectors.toList()));
+
+        int summaryDuration = 0;
+        if ("There".equals(direction)) {
+            destination = activities.get(activities.size()-2);
+            destination.setArrival(activitiesFromView.get(activitiesFromView.size()-2).getArrival());
+            destination.setDuration(activitiesFromView.get(activitiesFromView.size()-2).getDuration());
+            for (int i = start; i < activities.size() - 1; i++) {
+                Activity current = activities.get(i);
+                current.setNumber(i);
+                current.setArrival(current.getArrival().plusMinutes(summaryDuration));
+                if (!destination.equals(current)) {
+                    current.setDeparture(current.getArrival().plusMinutes(current.getDuration()));
+                } else { // update time left for destination activity - departure is fixed for now
+                    current.setDuration(current.getDuration() - summaryDuration);
+                }
+                summaryDuration += current.getDuration();
+            }
+        } else { // Back
+            destination = activities.get(start-1);
+            destination.setDeparture(activitiesFromView.get(start-1).getDeparture());
+            destination.setDuration(activitiesFromView.get(start-1).getDuration());
+            for (int i = activities.size() - 2; i >= start-1; i--) {
+                Activity current = activities.get(i);
+                current.setNumber(i);
+                current.setDeparture(current.getDeparture().minusMinutes(summaryDuration));
+                if (!destination.equals(current)) {
+                    current.setArrival(current.getDeparture().minusMinutes(current.getDuration()));
+                } else { // update time left for destination activity - departure is fixed for now
+                    current.setDuration(current.getDuration() - summaryDuration);
+                }
+                summaryDuration += current.getDuration();
+            }
+        }
+        activities.get(activities.size()-1).setNumber(activities.size()-1);
+
         forUpdate = tripService.save(forUpdate);
         model.addAttribute("trip", forUpdate);
 
-        if("There".equals(direction)) {
-            List<Activity> activities = forUpdate.getActivities();
-            Place origin = activities.get(0).getPlace();
-            Place destination = activities.get(activities.size()-2).getPlace();
-            int travelTime = routeService.calculateRouteTime(destination,origin);
-            List<Place> alongRoute = placeService.findAlongRoute(destination,origin, travelTime,
+        if ("There".equals(direction)) {
+            Place originPlace = activities.get(0).getPlace();
+            Place destinationPlace = destination.getPlace();
+            int travelTime = Long.valueOf(
+                    Duration.between(destination.getDeparture(), forUpdate.getArrival()).toMinutes()
+            ).intValue();
+            List<Place> alongRoute = placeService.findAlongRoute(destinationPlace, originPlace, travelTime*60,
                     user.getUser().getFavoriteCategories());
             model.addAttribute("alongRoute", alongRoute);
             model.addAttribute("direction", "Back");

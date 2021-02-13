@@ -5,8 +5,8 @@
 <head>
     <title>
         Add trip step
-        <c:if test="${direction = 'There'}"> 3 </c:if>
-        <c:if test="${direction = 'There'}"> 5 </c:if>
+        <c:if test="${direction.equals('There')}"> 3 </c:if>
+        <c:if test="${direction.equals('Back')}"> 5 </c:if>
     </title>
 </head>
 <body>
@@ -24,19 +24,17 @@
             <tr>
                 <td>${s.index * 2 + 1}</td>
                 <td>${activity.arrival} - ${activity.departure}</td>
-                <td>"${activity.place.name}
-                    <c:if test="${not empty activity.description
-                && not activity.description == '__ORIGIN__'
-                && not activity.description == '__DESTINATION__'}">
-                        - ${activity.description}
-                    </c:if>"
-                </td>
-                <c:if test="${not activity.description.equals('__ORIGIN__')
-                && not activity.description.equals('__DESTINATION__')
-                && s.index >= start}">
+                <td>${activity.place.name}</td>
+                <c:choose>
+                <c:when test="${empty activity.duration}">
                     <td><form:input path="activities[${s.index}].duration"/></td>
                     <td><form:input path="activities[${s.index}].description"/></td>
-                </c:if>
+                </c:when>
+                    <c:otherwise>
+                        <td>${activity.duration}</td>
+                        <td>${activity.description}</td>
+                    </c:otherwise>
+                </c:choose>
                 <form:hidden path="activities[${s.index}].id"/>
                 <form:hidden path="activities[${s.index}].place"/>
                 <form:hidden path="activities[${s.index}].duration"/>

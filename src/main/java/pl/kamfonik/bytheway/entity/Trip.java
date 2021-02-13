@@ -16,6 +16,7 @@ public class Trip {
     private Integer duration;
     private String name;
     @OneToMany(cascade = CascadeType.ALL)
+    @OrderBy("number ASC")
     private List<Activity> activities;
     private LocalTime departure;
     private LocalTime arrival;

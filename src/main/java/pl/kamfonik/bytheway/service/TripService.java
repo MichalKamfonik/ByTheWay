@@ -4,39 +4,49 @@ import pl.kamfonik.bytheway.entity.Activity;
 import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.entity.Trip;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public interface TripService {
 
-    default Trip initialize(Trip trip, Place origin, Place destination, Integer travelTime){
+    default Trip initialize(Trip trip, Place origin, Place destination,
+                            Integer travelTimeThere, Integer travelTimeBack) {
 
-        travelTime/=60; // to minutes
+        travelTimeThere /= 60; // to minutes
+        travelTimeBack /= 60; // to minutes
 
-        int departureInMinutes = trip.getDeparture().getHour()*60 + trip.getDeparture().getMinute();
-        int arrivalInMinutes = trip.getArrival().getHour()*60 + trip.getArrival().getMinute();
-        int tripDuration = trip.getDuration() * 24 * 60 + arrivalInMinutes - departureInMinutes;
+        LocalTime departure = trip.getDeparture();
+        LocalTime arrival = trip.getArrival();
+
+        int tripDuration = Long.valueOf(
+                Duration.between(departure,arrival).toMinutes() + (trip.getDuration()-1) * 24L * 60L
+        ).intValue();
 
         Activity start = new Activity(
                 "__ORIGIN__",
                 origin,
                 0,
-                trip.getDeparture(),
-                trip.getDeparture()
+                departure,
+                departure,
+                0
         );
         Activity goal = new Activity(
                 "__DESTINATION__",
                 destination,
-                tripDuration - travelTime*2,
-                trip.getDeparture().plusMinutes(travelTime),
-                trip.getArrival().minusMinutes(travelTime)
+                tripDuration - travelTimeThere - travelTimeBack,
+                departure.plusMinutes(travelTimeThere),
+                arrival.minusMinutes(travelTimeBack),
+                1
         );
         Activity end = new Activity(
                 "__ORIGIN__",
                 origin,
                 0,
-                trip.getArrival(),
-                trip.getArrival()
+                arrival,
+                arrival,
+                2
         );
         List<Activity> activities = new ArrayList<>();
         activities.add(start);

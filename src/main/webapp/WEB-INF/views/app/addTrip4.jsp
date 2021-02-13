@@ -19,13 +19,9 @@
             <tr>
                 <td>${s.index * 2 + 1}</td>
                 <td>${activity.arrival} - ${activity.departure}</td>
-                <td>"${activity.place.name}
-                    <c:if test="${not empty activity.description
-                && not activity.description == '__ORIGIN__'
-                && not activity.description == '__DESTINATION__'}">
-                        - ${activity.description}
-                    </c:if>"
-                </td>
+                <td>${activity.place.name}</td>
+                <td>${activity.duration}</td>
+                <td>${activity.description}</td>
             </tr>
             <c:if test="${not s.last}">
                 <tr>

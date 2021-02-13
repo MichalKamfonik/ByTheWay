@@ -21,12 +21,14 @@ public class Activity {
     private Integer duration;
     private LocalTime arrival;
     private LocalTime departure;
+    private Integer number;
 
-    public Activity(String description, Place place, Integer duration, LocalTime arrival, LocalTime departure) {
+    public Activity(String description, Place place, Integer duration, LocalTime arrival, LocalTime departure, Integer number) {
         this.description = description;
         this.place = place;
         this.duration = duration;
         this.arrival = arrival;
         this.departure = departure;
+        this.number = number;
     }
 }
