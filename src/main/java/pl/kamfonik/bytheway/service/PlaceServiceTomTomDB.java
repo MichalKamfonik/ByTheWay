@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import pl.kamfonik.bytheway.ByTheWayProperties;
 import pl.kamfonik.bytheway.dto.PoiCategoryDto;
+import pl.kamfonik.bytheway.dto.RoutesTableDto;
 import pl.kamfonik.bytheway.dto.SearchResultDto;
 import pl.kamfonik.bytheway.dto.SearchResultTableDto;
 import pl.kamfonik.bytheway.entity.Category;
@@ -61,8 +63,17 @@ public class PlaceServiceTomTomDB implements PlaceService {
                 + byTheWayProperties.getSearchPOI().getApikey();
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<SearchResultTableDto> forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
-
+        ResponseEntity<SearchResultTableDto> forEntity;
+        try {
+            forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
+        } catch (HttpClientErrorException e) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException exception) {
+                log.error("Sleep exception"); // log and ignore
+            }
+            forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
+        }
         return save(Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(this::searchResultsToPlaces)
                 .collect(Collectors.toList()).get(0));
@@ -74,8 +85,17 @@ public class PlaceServiceTomTomDB implements PlaceService {
                 + byTheWayProperties.getSearchPOI().getApikey();
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<SearchResultTableDto> forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
-
+        ResponseEntity<SearchResultTableDto> forEntity;
+        try {
+            forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
+        } catch (HttpClientErrorException e) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException exception) {
+                log.error("Sleep exception"); // log and ignore
+            }
+            forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
+        }
         return save(Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(SearchResultDto::getId)
                 .map(this::findPlaceById)
@@ -95,11 +115,17 @@ public class PlaceServiceTomTomDB implements PlaceService {
         HttpEntity<String> request = new HttpEntity<>(routeToSend.toString(), headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<SearchResultTableDto> forEntity = restTemplate.postForEntity(
-                url,
-                request,
-                SearchResultTableDto.class
-        );
+        ResponseEntity<SearchResultTableDto> forEntity;
+        try {
+            forEntity = restTemplate.postForEntity(url,request,SearchResultTableDto.class);
+        } catch (HttpClientErrorException e) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException exception) {
+                log.error("Sleep exception"); // log and ignore
+            }
+            forEntity = restTemplate.postForEntity(url,request,SearchResultTableDto.class);
+        }
 
         return saveAll(Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(SearchResultDto::getId)
