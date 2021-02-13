@@ -9,7 +9,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import pl.kamfonik.bytheway.ByTheWayProperties;
 import pl.kamfonik.bytheway.dto.PoiCategoryDto;
-import pl.kamfonik.bytheway.dto.RoutesTableDto;
 import pl.kamfonik.bytheway.dto.SearchResultDto;
 import pl.kamfonik.bytheway.dto.SearchResultTableDto;
 import pl.kamfonik.bytheway.entity.Category;
@@ -45,6 +44,7 @@ public class PlaceServiceTomTomDB implements PlaceService {
             "https://api.tomtom.com/search/2/searchAlongRoute/%20.json" +
                     "?maxDetourTime=__MAX_DETOUR_TIME__" +
                     "&typeahead=true" +
+                    "&spreadingMode=auto" +
                     "&limit=20" +
                     "&categorySet=__CATEGORY_SET__" +
                     "&detourOffset=true" +
@@ -62,21 +62,11 @@ public class PlaceServiceTomTomDB implements PlaceService {
         String url = TOMTOM_GET_POI_BY_ID_API_URL.replace("__ID__", id)
                 + byTheWayProperties.getSearchPOI().getApikey();
 
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<SearchResultTableDto> forEntity;
-        try {
-            forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
-        } catch (HttpClientErrorException e) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException exception) {
-                log.error("Sleep exception"); // log and ignore
-            }
-            forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
-        }
-        return save(Objects.requireNonNull(forEntity.getBody()).getResults().stream()
+        ResponseEntity<SearchResultTableDto> forEntity = tryGetForEntity(url);
+
+        return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(this::searchResultsToPlaces)
-                .collect(Collectors.toList()).get(0));
+                .collect(Collectors.toList()).get(0);
     }
 
     @Override
@@ -84,6 +74,17 @@ public class PlaceServiceTomTomDB implements PlaceService {
         String url = TOMTOM_SEARCH_POI_API_URL.replace("__QUERY__", query)
                 + byTheWayProperties.getSearchPOI().getApikey();
 
+
+        ResponseEntity<SearchResultTableDto> forEntity = tryGetForEntity(url);
+
+        return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
+                .map(SearchResultDto::getId)
+                .map(this::findPlaceById)
+                .collect(Collectors.toList())
+                .get(0);
+    }
+
+    private ResponseEntity<SearchResultTableDto> tryGetForEntity(String url) {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<SearchResultTableDto> forEntity;
         try {
@@ -96,11 +97,7 @@ public class PlaceServiceTomTomDB implements PlaceService {
             }
             forEntity = restTemplate.getForEntity(url, SearchResultTableDto.class);
         }
-        return save(Objects.requireNonNull(forEntity.getBody()).getResults().stream()
-                .map(SearchResultDto::getId)
-                .map(this::findPlaceById)
-                .collect(Collectors.toList())
-                .get(0));
+        return forEntity;
     }
 
     @Override
@@ -127,10 +124,10 @@ public class PlaceServiceTomTomDB implements PlaceService {
             forEntity = restTemplate.postForEntity(url,request,SearchResultTableDto.class);
         }
 
-        return saveAll(Objects.requireNonNull(forEntity.getBody()).getResults().stream()
+        return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
                 .map(SearchResultDto::getId)
                 .map(this::findPlaceById)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
     @Override
