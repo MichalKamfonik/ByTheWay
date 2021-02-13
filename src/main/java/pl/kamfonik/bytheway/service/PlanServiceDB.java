@@ -20,4 +20,8 @@ public class PlanServiceDB implements PlanService{
     public List<Plan> findAllPlans(){
         return planRepository.findAll();
     }
+
+    public Plan save(Plan plan){
+        return planRepository.save(plan);
+    }
 }

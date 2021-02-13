@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PlanService {
     List<Plan> findUserPlans(User user);
-    List<Plan> findAllPlans();
+    Plan save(Plan plan);
 }

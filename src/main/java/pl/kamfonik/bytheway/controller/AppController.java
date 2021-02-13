@@ -6,10 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import pl.kamfonik.bytheway.entity.Activity;
-import pl.kamfonik.bytheway.entity.Place;
-import pl.kamfonik.bytheway.entity.Trip;
-import pl.kamfonik.bytheway.entity.User;
+import pl.kamfonik.bytheway.entity.*;
 import pl.kamfonik.bytheway.security.CurrentUser;
 import pl.kamfonik.bytheway.service.*;
 
@@ -218,5 +215,22 @@ public class AppController {
         } else {
             return "/app/addTrip4";
         }
+    }
+
+    @GetMapping("/add-plan")
+    public String addPlanForm(Model model, @AuthenticationPrincipal CurrentUser user){
+        model.addAttribute("plan", new Plan());
+        model.addAttribute("trips",tripService.findUserTrips(user.getUser()));
+        model.addAttribute("plans",planService.findUserPlans(user.getUser()));
+
+        return "/app/addPlan";
+    }
+    @PostMapping("/add-plan")
+    public String addPlanForm(@ModelAttribute Plan plan, @AuthenticationPrincipal CurrentUser user){
+        plan.setEndTime(plan.getStartTime().plusDays(plan.getTrip().getDuration()));
+        plan.setUser(user.getUser());
+        planService.save(plan);
+
+        return "redirect:/app";
     }
 }
