@@ -11,7 +11,7 @@
         Duration [days]:
         <form:select path="duration">
             <form:option value="1" label="1"/>
-            <form:option value="1" label="2"/>
+            <form:option value="2" label="2"/>
         </form:select>
     </div>
     <div>
