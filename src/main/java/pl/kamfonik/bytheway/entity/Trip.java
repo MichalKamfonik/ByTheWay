@@ -20,4 +20,7 @@ public class Trip {
     private List<Activity> activities;
     private LocalTime departure;
     private LocalTime arrival;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

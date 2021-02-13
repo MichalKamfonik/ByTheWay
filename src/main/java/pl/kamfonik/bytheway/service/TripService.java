@@ -3,6 +3,7 @@ package pl.kamfonik.bytheway.service;
 import pl.kamfonik.bytheway.entity.Activity;
 import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.entity.Trip;
+import pl.kamfonik.bytheway.entity.User;
 
 import java.time.Duration;
 import java.time.LocalTime;
@@ -12,7 +13,7 @@ import java.util.List;
 public interface TripService {
 
     default Trip initialize(Trip trip, Place origin, Place destination,
-                            Integer travelTimeThere, Integer travelTimeBack) {
+                            Integer travelTimeThere, Integer travelTimeBack, User user) {
 
         travelTimeThere /= 60; // to minutes
         travelTimeBack /= 60; // to minutes
@@ -54,10 +55,14 @@ public interface TripService {
         activities.add(end);
         trip.setActivities(activities);
 
+        trip.setId(null);
+        trip.setUser(user);
         return save(trip);
     }
 
     Trip save(Trip trip);
 
     Trip findTripById(Long id);
+
+    List<Trip> findUserTrips(User user);
 }

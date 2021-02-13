@@ -21,7 +21,25 @@
                 <td>${plan.trip.name}</td>
                 <td>${plan.startTime}</td>
                 <td>${plan.endTime}</td>
-                <td><form action="<c:url value="/app/delete/${plan.id}"/>" method="post">
+                <td><form action="<c:url value="/app/delete/plan/${plan.id}"/>" method="post">
+                    <input type="submit" value="Delete">
+                </form></td>
+            </tr>
+        </c:forEach>
+    </table>
+</div>
+<div><h2>Your trips</h2>
+    <table border="1">
+        <tr>
+            <th>Position</th>
+            <th>Name</th>
+            <th>Action</th>
+        </tr>
+        <c:forEach items="${trips}" var="trip" varStatus="index">
+            <tr>
+                <td>${index.count}</td>
+                <td>${trip.name}</td>
+                <td><form action="<c:url value="/app/delete/trip/${trip.id}"/>" method="post">
                     <input type="submit" value="Delete">
                 </form></td>
             </tr>

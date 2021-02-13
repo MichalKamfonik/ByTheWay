@@ -34,6 +34,8 @@ public class AppController {
         if (user.getUser().getRoles().stream()
                 .anyMatch(r -> "ROLE_ADMIN".equals(r.getName()))) {
             categoryService.initialize();
+        } else {
+            return "redirect:/403";
         }
         return "redirect:/app";
     }
@@ -42,6 +44,7 @@ public class AppController {
     public String dashboard(Model model, @AuthenticationPrincipal CurrentUser currentUser) {
         User user = currentUser.getUser();
         model.addAttribute("plans", planService.findUserPlans(user));
+        model.addAttribute("trips", tripService.findUserTrips(user));
         model.addAttribute("categories", user.getFavoriteCategories());
         return "app/dashboard";
     }
@@ -79,7 +82,7 @@ public class AppController {
         int travelTimeThere = routeService.calculateRouteTime(origin, destination);
         int travelTimeBack = routeService.calculateRouteTime(destination, origin);
 
-        trip = tripService.initialize(trip, origin, destination, travelTimeThere, travelTimeBack);
+        trip = tripService.initialize(trip, origin, destination, travelTimeThere, travelTimeBack, user.getUser());
 
         model.addAttribute("trip", trip);
 
