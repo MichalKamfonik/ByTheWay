@@ -28,11 +28,11 @@
             <td></td>
             </c:forEach>
             <c:forEach begin="1" end="${LocalDate.now().lengthOfMonth()}" var="day">
-                <c:if test="${day%7 == 1}"><tr></c:if>
+                <c:if test="${(LocalDate.now().getDayOfWeek().getValue()+day)%7 == 1}"><tr></c:if>
                 <td>
                     <form:radiobutton path="startTime" label="${day}" value="${LocalDate.now().withDayOfMonth(day)}"/>
                 </td>
-                <c:if test="${day%7 == 0}"></tr></c:if>
+                <c:if test="${(LocalDate.now().getDayOfWeek().getValue()+day)%7 == 0}"></tr></c:if>
             </c:forEach>
             <c:forEach begin="${LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth())
                 .getDayOfWeek().getValue()+1}" end="7" varStatus="s">
