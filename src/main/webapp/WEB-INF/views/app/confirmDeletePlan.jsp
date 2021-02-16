@@ -1,3 +1,4 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -9,10 +10,10 @@ Start: ${plan.startTime} <br>
 End: ${plan.endTime} <br>
 Trip: ${plan.trip.name} <br>
 <div>
-    <form method="post">
+    <form:form method="post">
         <input type="submit" name="choice" value="Yes">
         <input type="submit" name="choice"  value="No">
-    </form>
+    </form:form>
 </div>
 </body>
 </html>

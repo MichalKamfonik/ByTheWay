@@ -19,6 +19,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/mock/admin/**").hasRole("ADMIN")
                 .antMatchers("/mock/user/**").authenticated()
                 .antMatchers("/app/**").authenticated()
+                .antMatchers("/rest/**").authenticated()
                 .antMatchers("/register").permitAll()
                 .anyRequest().permitAll()
                 .and().formLogin().loginPage("/login")
