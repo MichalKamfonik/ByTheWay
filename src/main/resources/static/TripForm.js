@@ -1,4 +1,4 @@
-const apihost = 'http://localhost:8080';
+const apihost = window.location.origin;
 const csrfToken = document.querySelector("#_CSRF_").value;
 
 document.addEventListener('DOMContentLoaded', function () {
