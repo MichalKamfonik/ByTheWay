@@ -1,6 +1,8 @@
 const apihost = window.location.origin;
 const csrfToken = document.querySelector("#_CSRF_").value;
 const activities = [];
+let alongRouteThere = [];
+let alongRouteBack = [];
 const DAY = 24 * 60;
 
 class Activity {
@@ -13,6 +15,7 @@ class Activity {
         this.description = description;
     }
 }
+
 document.addEventListener('DOMContentLoaded', function () {
     const x = document.getElementsByClassName("tab");
     x[0].style.display = "block";
@@ -47,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
         );
         const destination = new Activity(
             placeDestination,
-            (tripDuration - travelTimeThere - travelTimeBack).toFixed(0),
+            tripDuration - travelTimeThere - travelTimeBack,
             timeAfterMinutes(this.departure.value, travelTimeThere),
             timeBeforeMinutes(this.comeback.value, travelTimeBack),
             1,
@@ -68,10 +71,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         renderActivities(activities);
 
-        const alongRouteThere = await apiGetAlongRoute(placeOrigin, placeDestination, travelTimeThere * 60);
-        const alongRouteBack = await apiGetAlongRoute(placeDestination, placeOrigin, travelTimeBack * 60);
+        alongRouteThere = await apiGetAlongRoute(placeOrigin, placeDestination, travelTimeThere * 60);
+        alongRouteBack = await apiGetAlongRoute(placeDestination, placeOrigin, travelTimeBack * 60);
 
-        renderAlongRoute(alongRouteThere);
+        renderAlongRoute(alongRouteThere, "there");
+        renderAlongRoute(alongRouteBack, "back")
     });
 });
 
@@ -99,20 +103,33 @@ function timeAfterMinutes(time, minutes) {
     const timeH = parseInt(time.split(":")[0]);
     const timeM = parseInt(time.split(":")[1]);
 
-    const minutesH = (minutes / (60)).toFixed(0) % 24;
+    console.log("timeH",timeH);
+    console.log("timeM",timeM);
+
+    const minutesH = Math.floor(minutes / 60);
     const minutesM = minutes % 60;
 
-    const summaryM = timeM + minutesM;
-    const summaryH = timeH + minutesH + (summaryM / 60).toFixed(0);
+    console.log("minutesH",minutesH);
+    console.log("minutesM",minutesM);
 
-    return String(summaryH % 24).padStart(2, '0') + ":" + String(summaryM % 60).padStart(2, '0');
+    const summaryM = timeM + minutesM;
+    const summaryH = timeH + minutesH + Math.floor(summaryM / 60);
+
+    console.log("summaryM",summaryM);
+    console.log("summaryH",summaryH);
+
+    let result = String(summaryH % 24).padStart(2, '0') + ":" + String(summaryM % 60).padStart(2, '0');
+
+    console.log("timeAfterMinutes(",time,",",minutes,") = ",result);
+
+    return result;
 }
 
 function timeBeforeMinutes(time, minutes) {
     const timeH = parseInt(time.split(":")[0]);
     const timeM = parseInt(time.split(":")[1]);
 
-    const minutesH = (minutes / (60)).toFixed(0) % 24;
+    const minutesH = Math.floor(minutes / (60));
     const minutesM = minutes % 60;
 
     const summaryM = timeM - minutesM;
@@ -185,9 +202,9 @@ function renderActivity(activity, number) {
     nameTd.innerText = activity.place.name;
     tr.appendChild(nameTd);
     const durationTd = document.createElement("td");
-    durationTd.innerText = (activity.duration / DAY).toFixed(0)
+    durationTd.innerText = Math.floor(activity.duration / DAY)
         + "d "
-        + ((activity.duration % DAY) / 60).toFixed(0)
+        + Math.floor((activity.duration % DAY) / 60)
         + "h "
         + activity.duration % 60
         + "m";
@@ -198,6 +215,10 @@ function renderActivity(activity, number) {
 }
 
 function renderActivities() {
+    const trip = document.querySelector("#trip");
+    while (trip.children.length > 1) {
+        trip.removeChild(trip.lastChild);
+    }
     for (let i = 0; i < activities.length - 1; i++) {
         const current = activities[i];
         const next = activities[i + 1];
@@ -213,12 +234,18 @@ function renderActivities() {
         );
         renderActivity(travel, i * 2 + 2);
     }
-    renderActivity(activities[activities.length - 1], activities.length*2-1);
+    renderActivity(activities[activities.length - 1], activities.length * 2 - 1);
 }
 
-function renderAlongRoute(places){
-    const alongRouteThere = document.querySelector("#alongThere")
-    places.forEach(place=>{
+function renderAlongRoute(places, direction) {
+    let alongRoute;
+    if ("there" === direction) {
+        alongRoute = document.querySelector("#alongThere");
+    } else {
+        alongRoute = document.querySelector("#alongBack");
+    }
+
+    places.forEach(place => {
         const tr = document.createElement("tr");
         const nameTd = document.createElement("td");
         nameTd.innerText = place.name;
@@ -227,14 +254,115 @@ function renderAlongRoute(places){
         addressTd.innerText = place.address;
         tr.appendChild(addressTd);
         const categoriesTd = document.createElement("td");
-        categoriesTd.innerText = place.categories.map(c=>c.name).reduce((acc,curr)=>acc+" "+curr);
+        categoriesTd.innerText = place.categories.map(c => c.name).reduce((acc, curr) => acc + " " + curr);
         tr.appendChild(categoriesTd);
         const addTd = document.createElement("td");
-        const addButton = document.createElement("input");
+        const addButton = document.createElement("button");
         addTd.appendChild(addButton);
         tr.appendChild(addTd);
         addButton.value = "add";
+        if ("there" === direction) {
+            addButton.addEventListener("click", addButtonListenerThere);
+        } else {
+            addButton.addEventListener("click", addButtonListenerBack);
+        }
 
-        alongRouteThere.appendChild(tr);
+        alongRoute.appendChild(tr);
     })
+}
+
+function addButtonListenerThere(e) {
+    e.preventDefault();
+    showDurationAndDescription(e, "there");
+}
+
+function addButtonListenerBack(e) {
+    e.preventDefault();
+    showDurationAndDescription(e, "back");
+}
+
+function showDurationAndDescription(e, direction) {
+    e.preventDefault();
+    let button = e.target;
+    let tr = e.target.parentElement.parentElement;
+    let durationTd = document.createElement("td");
+    durationTd.innerText = "Duration: ";
+    tr.insertBefore(durationTd, button.parentElement);
+    let durationInput = document.createElement("input");
+    durationTd.type = "number";
+    durationTd.appendChild(durationInput);
+    let descriptionTd = document.createElement("td");
+    descriptionTd.innerText = "Description: ";
+    tr.insertBefore(descriptionTd, button.parentElement);
+    let descriptionInput = document.createElement("input");
+    descriptionTd.type = "text";
+    descriptionTd.appendChild(descriptionInput);
+    if ("there" === direction) {
+        button.removeEventListener("click", addButtonListenerThere);
+        button.addEventListener("click", addToThere);
+    } else {
+        button.removeEventListener("click", addButtonListenerBack);
+        button.addEventListener("click", addToBack);
+    }
+}
+
+async function addToThere(e) {
+    e.preventDefault();
+    const alongThere = document.querySelector("#alongThere");
+    const button = e.target;
+    const tr = button.parentElement.parentElement;
+    const tds = tr.children;
+    const name = tds[0].innerText;
+    const placeIndex = alongRouteThere.findIndex(p => p.name === name);
+    const place = alongRouteThere[placeIndex];
+    const duration = tds[3].lastChild.value;
+    const description = tds[4].lastChild.value;
+
+    let added = false;
+    let difference = 0;
+    for (let i = 1; i < activities.length-1; i++) {
+        let current = activities[i];
+        if (!added && (current.description === "DESTINATION" || current.place.detourOffset > place.detourOffset)) {
+            let previous = activities[i-1];
+            let next = activities[i];
+            const arrival = timeAfterMinutes(
+                previous.departure,
+                (await apiGetRouteTime(previous.place, place).then(time => time) / 60).toFixed(0)
+            );
+            const departure = timeAfterMinutes(arrival, duration);
+            activities.splice(i, 0, new Activity(
+                place,
+                duration,
+                arrival,
+                departure,
+                i,
+                description
+            ));
+            difference = minutesBetweenTimes(next.arrival,
+                timeAfterMinutes(
+                    departure,
+                    (await apiGetRouteTime(place, next.place).then(time => time) / 60).toFixed(0)
+                )
+            );
+            added = true;
+        } else if (added) {
+            current.arrival = timeAfterMinutes(current.arrival,difference);
+            current.number++;
+            if(i<activities.length-2){
+                current.departure = timeAfterMinutes(current.departure,difference);
+            } else {
+                current.duration -= difference;
+            }
+        }
+    }
+    activities[activities.length-1].number++;
+    console.log(activities);
+
+    alongRouteThere.splice(placeIndex,1);
+    alongThere.removeChild(tr);
+    renderActivities();
+}
+
+async function addToBack(e) {
+    e.preventDefault();
 }

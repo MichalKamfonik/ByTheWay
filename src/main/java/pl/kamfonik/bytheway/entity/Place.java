@@ -21,4 +21,6 @@ public class Place {
     private Double lon;
     @ManyToMany
     private List<Category> categories;
+    @Transient
+    private Integer detourOffset;
 }

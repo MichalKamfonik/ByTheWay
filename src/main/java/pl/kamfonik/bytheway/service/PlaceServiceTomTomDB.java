@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import pl.kamfonik.bytheway.ByTheWayProperties;
-import pl.kamfonik.bytheway.dto.PoiCategoryDto;
-import pl.kamfonik.bytheway.dto.SearchResultDto;
-import pl.kamfonik.bytheway.dto.SearchResultTableDto;
+import pl.kamfonik.bytheway.dto.*;
 import pl.kamfonik.bytheway.entity.Category;
 import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.repository.PlaceRepository;
@@ -112,21 +110,20 @@ public class PlaceServiceTomTomDB implements PlaceService {
         HttpEntity<String> request = new HttpEntity<>(routeToSend.toString(), headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<SearchResultTableDto> forEntity;
+        ResponseEntity<SearchAlongRouteResultTableDto> forEntity;
         try {
-            forEntity = restTemplate.postForEntity(url,request,SearchResultTableDto.class);
+            forEntity = restTemplate.postForEntity(url,request, SearchAlongRouteResultTableDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException exception) {
                 log.error("Sleep exception"); // log and ignore
             }
-            forEntity = restTemplate.postForEntity(url,request,SearchResultTableDto.class);
+            forEntity = restTemplate.postForEntity(url,request,SearchAlongRouteResultTableDto.class);
         }
 
         return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
-                .map(SearchResultDto::getId)
-                .map(this::findPlaceById)
+                .map(this::searchResultsToPlaces)
                 .collect(Collectors.toList());
     }
 
@@ -194,7 +191,14 @@ public class PlaceServiceTomTomDB implements PlaceService {
                                 .map(id -> id.toString().substring(0, 4))
                                 .map(Long::parseLong)
                                 .collect(Collectors.toList())
-                ));
+                )
+        );
+        log.debug("result class = {}",result.getClass());
+        if(result instanceof SearchAlongRouteResultDto){
+            place.setDetourOffset(((SearchAlongRouteResultDto) result).getDetourOffset());
+        } else {
+            place.setDetourOffset(0);
+        }
         return place;
     }
 }

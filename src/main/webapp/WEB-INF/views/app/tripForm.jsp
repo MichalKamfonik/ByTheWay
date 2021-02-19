@@ -29,12 +29,22 @@
             </table>
         </div>
         <div>
-            <table id="alongThere" border="1">
+            <table id="alongThere">
                 <tr>
                     <th>Name</th>
                     <th>Address</th>
                     <th>Categories</th>
-                    <th>Action</th>
+                    <th colspan="3">Action</th>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <table id="alongBack">
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Categories</th>
+                    <th colspan="3">Action</th>
                 </tr>
             </table>
         </div>
