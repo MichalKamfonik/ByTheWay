@@ -6,14 +6,14 @@
     <title>Add trip</title>
 </head>
 <body>
-<form method="post" id="tripForm">
+<form:form method="post" id="tripForm" modelAttribute="trip">
     <div class="tab" id="basic">
-        <p>Days: <input type="number" name="duration"></p>
-        <p>Name: <input type="text" name="name"></p>
+        <p>Days: <form:input path="duration"/></p>
+        <p>Name: <form:input path="name"/></p>
         <p>Origin: <input type="text" name="origin"></p>
         <p>Destination: <input type="text" name="destination"></p>
-        <p>Departure time: <input type="time" name="departure"></p>
-        <p>Comeback time: <input type="time" name="arrival"></p>
+        <p>Departure time: <form:input path="departure"/></p>
+        <p>Comeback time: <form:input path="arrival"/></p>
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="_CSRF_"/>
     </div>
     <div class="tab">
@@ -50,7 +50,7 @@
         </div>
     </div>
     <p><input type="submit"></p>
-</form>
+</form:form>
 <script src="<c:url value="/TripForm.js"/>"></script>
 </body>
 </html>

@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     tripForm.addEventListener('submit', submitListener1);
 });
 
-async function submitListener1 (e) {
+async function submitListener1(e) {
     e.preventDefault();
 
     TRIP.name = this.name.value;
@@ -88,13 +88,50 @@ async function submitListener1 (e) {
     renderAlongRoute(ALONG_ROUTE_THERE, "there");
     renderAlongRoute(ALONG_ROUTE_BACK, "back");
 
-    this.removeEventListener("submit",submitListener1);
-    this.addEventListener("submit",submitListener2);
+    this.removeEventListener("submit", submitListener1);
+    this.addEventListener("submit", submitListener2);
 }
 
-async function submitListener2 (e){
-    e.preventDefault();
-     apiPostTrip();
+async function submitListener2(e) {
+    // e.preventDefault();
+    // apiPostTrip();
+    for (let i = 0; i < ACTIVITIES.length; i++) {
+        const input1 = document.createElement("input");
+        input1.type="hidden";
+        input1.name="activities["+i+"].duration";
+        input1.value = ACTIVITIES[i].duration;
+        this.appendChild(input1);
+
+        const input2 = document.createElement("input");
+        input2.type="hidden";
+        input2.name="activities["+i+"].description";
+        input2.value = ACTIVITIES[i].description;
+        this.appendChild(input2);
+
+        const input3 = document.createElement("input");
+        input3.type="hidden";
+        input3.name="activities["+i+"].place";
+        input3.value = ACTIVITIES[i].place;
+        this.appendChild(input3);
+
+        const input4 = document.createElement("input");
+        input4.type="hidden";
+        input4.name="activities["+i+"].departure";
+        input4.value = ACTIVITIES[i].departure;
+        this.appendChild(input4);
+
+        const input5 = document.createElement("input");
+        input5.type="hidden";
+        input5.name="activities["+i+"].arrival";
+        input5.value = ACTIVITIES[i].arrival;
+        this.appendChild(input5);
+
+        const input6 = document.createElement("input");
+        input6.type="hidden";
+        input6.name="activities["+i+"].number";
+        input6.value = ACTIVITIES[i].number;
+        this.appendChild(input6);
+    }
 }
 
 function renderActivity(activity, number) {
@@ -268,7 +305,7 @@ async function addToThere(e) {
             }
         }
     }
-    for(let i = destinationIndex+1; i<ACTIVITIES.length; i++){
+    for (let i = destinationIndex + 1; i < ACTIVITIES.length; i++) {
         ACTIVITIES[i].number++;
     }
     console.log(ACTIVITIES);

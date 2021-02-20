@@ -191,7 +191,7 @@ public class AppController {
     }
 
     @PostMapping("/add-trip")
-    public String addTrip(@RequestBody Trip trip, @AuthenticationPrincipal CurrentUser currentUser) {
+    public String addTrip(@ModelAttribute Trip trip, @AuthenticationPrincipal CurrentUser currentUser) {
         trip.setUser(currentUser.getUser());
         tripService.save(trip);
         return "redirect:/app";
