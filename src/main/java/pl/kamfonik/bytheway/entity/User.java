@@ -3,6 +3,7 @@ package pl.kamfonik.bytheway.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
@@ -21,6 +22,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
     @ManyToMany(fetch = FetchType.EAGER)
+    @Size(max = 10)
     @JoinTable(name = "user_category", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> favoriteCategories;
