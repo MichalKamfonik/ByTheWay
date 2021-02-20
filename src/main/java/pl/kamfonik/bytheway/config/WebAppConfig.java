@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pl.kamfonik.bytheway.converter.CategoryConverter;
+import pl.kamfonik.bytheway.converter.PlaceConverter;
 
 @Configuration
 public class WebAppConfig implements WebMvcConfigurer {
@@ -17,5 +18,9 @@ public class WebAppConfig implements WebMvcConfigurer {
     @Bean
     public CategoryConverter getCategoryConverter(){
         return new CategoryConverter();
+    }
+    @Bean
+    public PlaceConverter getPlaceConverter(){
+        return new PlaceConverter();
     }
 }

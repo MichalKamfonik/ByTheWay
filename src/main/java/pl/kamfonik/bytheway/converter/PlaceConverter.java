@@ -5,12 +5,12 @@ import org.springframework.core.convert.converter.Converter;
 import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.service.PlaceService;
 
-public class PlaceConverter implements Converter<String, Place> {
+public class PlaceConverter  implements Converter <String, Place>{
     @Autowired
     private PlaceService placeService;
 
     @Override
     public Place convert(String s) {
-        return null;
+        return placeService.findPlaceById(s);
     }
 }

@@ -16,7 +16,6 @@ let ALONG_ROUTE_THERE = [];
 let ALONG_ROUTE_BACK = [];
 const DAY = 24 * 60;
 let X = document.getElementsByClassName("tab");
-const TRIP = {};
 
 document.addEventListener('DOMContentLoaded', function () {
     X[0].style.display = "block";
@@ -28,12 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function submitListener1(e) {
     e.preventDefault();
-
-    TRIP.name = this.name.value;
-    TRIP.duration = this.duration.value;
-    TRIP.departure = this.departure.value;
-    TRIP.arrival = this.arrival.value;
-    TRIP.activities = ACTIVITIES;
 
     X[0].style.display = "none";    // hide current tab
     X[1].style.display = "block";   // show next tab
@@ -93,8 +86,6 @@ async function submitListener1(e) {
 }
 
 async function submitListener2(e) {
-    // e.preventDefault();
-    // apiPostTrip();
     for (let i = 0; i < ACTIVITIES.length; i++) {
         const input1 = document.createElement("input");
         input1.type="hidden";
@@ -111,7 +102,7 @@ async function submitListener2(e) {
         const input3 = document.createElement("input");
         input3.type="hidden";
         input3.name="activities["+i+"].place";
-        input3.value = ACTIVITIES[i].place;
+        input3.value = ACTIVITIES[i].place.id;
         this.appendChild(input3);
 
         const input4 = document.createElement("input");
@@ -308,7 +299,6 @@ async function addToThere(e) {
     for (let i = destinationIndex + 1; i < ACTIVITIES.length; i++) {
         ACTIVITIES[i].number++;
     }
-    console.log(ACTIVITIES);
     ALONG_ROUTE_THERE.splice(placeIndex, 1);
     alongThere.removeChild(tr);
     renderActivities();
@@ -371,24 +361,6 @@ async function addToBack(e) {
     ALONG_ROUTE_BACK.splice(placeIndex, 1);
     alongBack.removeChild(tr);
     renderActivities();
-}
-
-function apiPostTrip() {
-    fetch(
-        API_HOST + '/app/add-trip',
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                "X-CSRF-Token": CSRF_TOKEN
-            },
-            body: JSON.stringify(TRIP),
-            method: 'POST'
-        }
-    ).then(response => {
-        if (response.redirected) {
-            window.location.href = response.url;
-        }
-    })
 }
 
 function apiGetPlace(query) {
