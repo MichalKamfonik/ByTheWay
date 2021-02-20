@@ -21,9 +21,14 @@
                 <td>${plan.trip.name}</td>
                 <td>${plan.startTime}</td>
                 <td>${plan.endTime}</td>
-                <td><form action="<c:url value="/app/delete/plan/${plan.id}"/>" method="get">
-                    <input type="submit" value="Delete">
-                </form></td>
+                <td>
+                    <form action="<c:url value="/app/delete/plan/${plan.id}"/>" method="get">
+                        <input type="submit" value="Delete">
+                    </form>
+                    <form action="<c:url value="/app/show/plan/${plan.id}"/>" method="get">
+                        <input type="submit" value="Show">
+                    </form>
+                </td>
             </tr>
         </c:forEach>
     </table>
@@ -43,9 +48,14 @@
             <tr>
                 <td>${index.count}</td>
                 <td>${trip.name}</td>
-                <td><form action="<c:url value="/app/delete/trip/${trip.id}"/>" method="get">
-                    <input type="submit" value="Delete">
-                </form></td>
+                <td>
+                    <form action="<c:url value="/app/delete/trip/${trip.id}"/>" method="get">
+                        <input type="submit" value="Delete">
+                    </form>
+                    <form action="<c:url value="/app/show/trip/${trip.id}"/>" method="get">
+                        <input type="submit" value="Show">
+                    </form>
+                </td>
             </tr>
         </c:forEach>
     </table>

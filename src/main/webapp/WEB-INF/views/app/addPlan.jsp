@@ -9,7 +9,7 @@
 <body>
 <form:form modelAttribute="plan" method="post">
     <div>Select trip: <form:select path="trip" items="${trips}" itemLabel="name" itemValue="id"/></div>
-    <div> Select weekend: <br>
+    <div> Select date: <br>
         <table border="1">
             <tr>
                 <th colspan="7">${LocalDate.now().getMonth().name()}</th>

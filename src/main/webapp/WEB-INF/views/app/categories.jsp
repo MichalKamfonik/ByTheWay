@@ -11,6 +11,7 @@
     <form:form modelAttribute="user" method="post">
         <form:checkboxes path="favoriteCategories" items="${categories}"
                          itemValue="id" itemLabel="name" delimiter="<br>"/>
+        <form:errors path="favoriteCategories" cssClass="error"/>
         <br>
         <input type="submit">
     </form:form>

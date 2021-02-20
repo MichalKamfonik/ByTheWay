@@ -97,121 +97,6 @@ async function submitListener2 (e){
      apiPostTrip();
 }
 
-function apiPostTrip() {
-    fetch(
-        API_HOST + '/app/add-trip',
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                "X-CSRF-Token": CSRF_TOKEN
-            },
-            body: JSON.stringify(TRIP),
-            method: 'POST'
-        }
-    ).then(response => {
-        // HTTP 301 response
-        // HOW CAN I FOLLOW THE HTTP REDIRECT RESPONSE?
-        if (response.redirected) {
-            window.location.href = response.url;
-        }
-    })
-}
-
-function apiGetPlace(query) {
-    return fetch(
-        API_HOST + '/rest/find-place',
-        {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                "X-CSRF-Token": CSRF_TOKEN
-            },
-            body: "query=" + query,
-            method: 'POST'
-        }
-    ).then(resp => {
-            if (!resp.ok) {
-                alert(resp.statusText);
-            }
-            return resp.json();
-        }
-    )
-}
-
-function timeAfterMinutes(time, minutes) {
-    const timeH = parseInt(time.split(":")[0]);
-    const timeM = parseInt(time.split(":")[1]);
-
-    const minutesH = Math.floor(minutes / 60);
-    const minutesM = minutes % 60;
-
-    const summaryM = timeM + minutesM;
-    const summaryH = timeH + minutesH + Math.floor(summaryM / 60);
-
-    return String(summaryH % 24).padStart(2, '0') + ":" + String(summaryM % 60).padStart(2, '0');
-}
-
-function timeBeforeMinutes(time, minutes) {
-    const timeH = parseInt(time.split(":")[0]);
-    const timeM = parseInt(time.split(":")[1]);
-
-    const minutesH = Math.floor(minutes / (60));
-    const minutesM = minutes % 60;
-
-    const summaryM = timeM - minutesM;
-    const summaryH = timeH - minutesH - (summaryM < 0 ? 1 : 0);
-
-    return String((24 + summaryH) % 24).padStart(2, '0') + ":" + String((60 + summaryM) % 60).padStart(2, '0');
-}
-
-function minutesBetweenTimes(start, end) {
-    const startH = parseInt(start.split(":")[0]);
-    const startM = parseInt(start.split(":")[1]);
-
-    const endH = parseInt(end.split(":")[0]);
-    const endM = parseInt(end.split(":")[1]);
-    return ((endH * 60 + endM) - (startH * 60 + startM) + DAY) % (DAY);
-}
-
-function apiGetRouteTime(origin, destination) {
-    return fetch(
-        API_HOST + '/rest/calculate-route',
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                "X-CSRF-Token": CSRF_TOKEN
-            },
-            body: JSON.stringify([origin, destination]),
-            method: 'POST'
-        }
-    ).then(resp => {
-            if (!resp.ok) {
-                alert(resp.statusText);
-            }
-            return resp.json();
-        }
-    )
-}
-
-function apiGetAlongRoute(origin, destination, travelTime) {
-    return fetch(
-        API_HOST + '/rest/find-along-route/' + travelTime,
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                "X-CSRF-Token": CSRF_TOKEN
-            },
-            body: JSON.stringify([origin, destination]),
-            method: 'POST'
-        }
-    ).then(resp => {
-            if (!resp.ok) {
-                alert(resp.statusText);
-            }
-            return resp.json();
-        }
-    )
-}
-
 function renderActivity(activity, number) {
     const trip = document.querySelector("#trip");
 
@@ -345,6 +230,7 @@ async function addToThere(e) {
 
     let added = false;
     let difference = 0;
+    let destinationIndex = -1;
     for (let i = 1; i < ACTIVITIES.length - 1; i++) {
         let current = ACTIVITIES[i];
         if (!added && (current.description === "DESTINATION" || current.place.detourOffset > place.detourOffset)) {
@@ -377,12 +263,15 @@ async function addToThere(e) {
                 current.departure = timeAfterMinutes(current.departure, difference);
             } else {
                 current.duration -= difference;
+                destinationIndex = i;
                 break;
             }
         }
     }
-    ACTIVITIES[ACTIVITIES.length - 1].number++;
-
+    for(let i = destinationIndex+1; i<ACTIVITIES.length; i++){
+        ACTIVITIES[i].number++;
+    }
+    console.log(ACTIVITIES);
     ALONG_ROUTE_THERE.splice(placeIndex, 1);
     alongThere.removeChild(tr);
     renderActivities();
@@ -428,7 +317,7 @@ async function addToBack(e) {
                 previous.departure
             );
             added = true;
-            i++;
+            i++; // step back
         } else if (added) {
             current.departure = timeBeforeMinutes(current.departure, difference);
             if (current.description !== "DESTINATION") {
@@ -442,8 +331,120 @@ async function addToBack(e) {
         }
     }
     ACTIVITIES[ACTIVITIES.length - 1].number++;
-
     ALONG_ROUTE_BACK.splice(placeIndex, 1);
     alongBack.removeChild(tr);
     renderActivities();
+}
+
+function apiPostTrip() {
+    fetch(
+        API_HOST + '/app/add-trip',
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": CSRF_TOKEN
+            },
+            body: JSON.stringify(TRIP),
+            method: 'POST'
+        }
+    ).then(response => {
+        if (response.redirected) {
+            window.location.href = response.url;
+        }
+    })
+}
+
+function apiGetPlace(query) {
+    return fetch(
+        API_HOST + '/rest/find-place',
+        {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                "X-CSRF-Token": CSRF_TOKEN
+            },
+            body: "query=" + query,
+            method: 'POST'
+        }
+    ).then(resp => {
+            if (!resp.ok) {
+                alert(resp.statusText);
+            }
+            return resp.json();
+        }
+    )
+}
+
+function apiGetAlongRoute(origin, destination, travelTime) {
+    return fetch(
+        API_HOST + '/rest/find-along-route/' + travelTime,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": CSRF_TOKEN
+            },
+            body: JSON.stringify([origin, destination]),
+            method: 'POST'
+        }
+    ).then(resp => {
+            if (!resp.ok) {
+                alert(resp.statusText);
+            }
+            return resp.json();
+        }
+    )
+}
+
+function apiGetRouteTime(origin, destination) {
+    return fetch(
+        API_HOST + '/rest/calculate-route',
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": CSRF_TOKEN
+            },
+            body: JSON.stringify([origin, destination]),
+            method: 'POST'
+        }
+    ).then(resp => {
+            if (!resp.ok) {
+                alert(resp.statusText);
+            }
+            return resp.json();
+        }
+    )
+}
+
+function timeAfterMinutes(time, minutes) {
+    const timeH = parseInt(time.split(":")[0]);
+    const timeM = parseInt(time.split(":")[1]);
+
+    const minutesH = Math.floor(minutes / 60);
+    const minutesM = minutes % 60;
+
+    const summaryM = timeM + minutesM;
+    const summaryH = timeH + minutesH + Math.floor(summaryM / 60);
+
+    return String(summaryH % 24).padStart(2, '0') + ":" + String(summaryM % 60).padStart(2, '0');
+}
+
+function timeBeforeMinutes(time, minutes) {
+    const timeH = parseInt(time.split(":")[0]);
+    const timeM = parseInt(time.split(":")[1]);
+
+    const minutesH = Math.floor(minutes / (60));
+    const minutesM = minutes % 60;
+
+    const summaryM = timeM - minutesM;
+    const summaryH = timeH - minutesH - (summaryM < 0 ? 1 : 0);
+
+    return String((24 + summaryH) % 24).padStart(2, '0') + ":" + String((60 + summaryM) % 60).padStart(2, '0');
+}
+
+function minutesBetweenTimes(start, end) {
+    const startH = parseInt(start.split(":")[0]);
+    const startM = parseInt(start.split(":")[1]);
+
+    const endH = parseInt(end.split(":")[0]);
+    const endM = parseInt(end.split(":")[1]);
+    return ((endH * 60 + endM) - (startH * 60 + startM) + DAY) % (DAY);
 }

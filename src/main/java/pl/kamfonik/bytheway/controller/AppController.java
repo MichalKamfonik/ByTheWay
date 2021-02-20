@@ -12,6 +12,7 @@ import pl.kamfonik.bytheway.security.CurrentUser;
 import pl.kamfonik.bytheway.service.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -65,7 +66,7 @@ public class AppController {
     public String manageCategories(@Valid @ModelAttribute User user,
                                    BindingResult result,
                                    @AuthenticationPrincipal CurrentUser currentUser) {
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             return "app/categories";
         }
         User currentUserUser = currentUser.getUser();
@@ -98,8 +99,15 @@ public class AppController {
                                     @PathVariable Long id) {
         User user = currentUser.getUser();
         if (user.isAdmin() || tripService.checkUserTrip(id, user)) {
-            model.addAttribute("trip", tripService.findTripById(id));
-            return "/app/confirmDeleteTrip";
+            Trip trip = tripService.findTripById(id);
+            List<Plan> plans = planService.findPlansByTrip(trip);
+            if(plans.isEmpty()) {
+                model.addAttribute("trip", trip);
+                return "/app/confirmDeleteTrip";
+            } else {
+                model.addAttribute("plans",plans);
+                return "/app/deleteTripImpossible";
+            }
         } else {
             return "redirect:/403";
         }
@@ -129,6 +137,32 @@ public class AppController {
         if (user.isAdmin() || planService.checkUserPlan(id, user)) {
             model.addAttribute("plan", planService.findPlanById(id));
             return "/app/confirmDeletePlan";
+        } else {
+            return "redirect:/403";
+        }
+    }
+
+    @GetMapping("/show/plan/{id}")
+    public String showPlan(Model model,
+                           @AuthenticationPrincipal CurrentUser currentUser,
+                           @PathVariable Long id) {
+        User user = currentUser.getUser();
+        if (user.isAdmin() || planService.checkUserPlan(id, user)) {
+            model.addAttribute("plan", planService.findPlanById(id));
+            return "/app/showPlan";
+        } else {
+            return "redirect:/403";
+        }
+    }
+
+    @GetMapping("/show/trip/{id}")
+    public String showTrip(Model model,
+                           @AuthenticationPrincipal CurrentUser currentUser,
+                           @PathVariable Long id) {
+        User user = currentUser.getUser();
+        if (user.isAdmin() || tripService.checkUserTrip(id, user)) {
+            model.addAttribute("trip", tripService.findTripById(id));
+            return "/app/showTrip";
         } else {
             return "redirect:/403";
         }

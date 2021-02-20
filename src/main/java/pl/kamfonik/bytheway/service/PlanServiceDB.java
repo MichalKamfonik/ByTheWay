@@ -3,6 +3,7 @@ package pl.kamfonik.bytheway.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.kamfonik.bytheway.entity.Plan;
+import pl.kamfonik.bytheway.entity.Trip;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.repository.PlanRepository;
 
@@ -38,5 +39,10 @@ public class PlanServiceDB implements PlanService{
     @Override
     public void delete(Long id) {
         planRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Plan> findPlansByTrip(Trip trip) {
+        return planRepository.findByTrip(trip);
     }
 }
