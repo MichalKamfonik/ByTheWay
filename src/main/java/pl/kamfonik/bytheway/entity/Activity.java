@@ -15,7 +15,7 @@ public class Activity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "place_id")
     private Place place;
     private Integer duration;

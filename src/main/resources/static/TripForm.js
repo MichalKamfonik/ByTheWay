@@ -1,10 +1,3 @@
-const apihost = window.location.origin;
-const csrfToken = document.querySelector("#_CSRF_").value;
-const activities = [];
-let alongRouteThere = [];
-let alongRouteBack = [];
-const DAY = 24 * 60;
-
 class Activity {
     constructor(place, duration, arrival, departure, number, description) {
         this.place = place;
@@ -16,76 +9,121 @@ class Activity {
     }
 }
 
+const API_HOST = window.location.origin;
+const CSRF_TOKEN = document.querySelector("#_CSRF_").value;
+const ACTIVITIES = [];
+let ALONG_ROUTE_THERE = [];
+let ALONG_ROUTE_BACK = [];
+const DAY = 24 * 60;
+let X = document.getElementsByClassName("tab");
+const TRIP = {};
+
 document.addEventListener('DOMContentLoaded', function () {
-    const x = document.getElementsByClassName("tab");
-    x[0].style.display = "block";
+    X[0].style.display = "block";
 
-    const tripForm = document.querySelector('form');
+    const tripForm = document.querySelector("#tripForm");
 
-    tripForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        x[0].style.display = "none";    // hide current tab
-        x[1].style.display = "block";   // show next tab
-
-        const departureTime = this.departure.value.split(":");
-        const comebackTime = this.comeback.value.split(":");
-
-        const tripStartInMinutes = departureTime[0] * 60 + parseInt(departureTime[1]);
-        const tripEndInMinutes = comebackTime[0] * 60 + parseInt(comebackTime[1]);
-        const tripDuration = (this.days.value - 1) * DAY + parseInt(tripEndInMinutes) - tripStartInMinutes;
-
-        const placeOrigin = await apiGetPlace(this.origin.value).then(place => place);
-        const placeDestination = await apiGetPlace(this.destination.value).then(place => place);
-
-        const travelTimeThere = (await apiGetRouteTime(placeOrigin, placeDestination).then(time => time) / 60).toFixed(0);
-        const travelTimeBack = (await apiGetRouteTime(placeDestination, placeOrigin).then(time => time) / 60).toFixed(0);
-
-        const start = new Activity(
-            placeOrigin,
-            0,
-            this.departure.value,
-            this.departure.value,
-            0,
-            "ORIGIN"
-        );
-        const destination = new Activity(
-            placeDestination,
-            tripDuration - travelTimeThere - travelTimeBack,
-            timeAfterMinutes(this.departure.value, travelTimeThere),
-            timeBeforeMinutes(this.comeback.value, travelTimeBack),
-            1,
-            "DESTINATION"
-        );
-        const end = new Activity(
-            placeOrigin,
-            0,
-            this.comeback.value,
-            this.comeback.value,
-            2,
-            "ORIGIN"
-        );
-
-        activities.push(start);
-        activities.push(destination);
-        activities.push(end);
-
-        renderActivities(activities);
-
-        alongRouteThere = await apiGetAlongRoute(placeOrigin, placeDestination, travelTimeThere * 60);
-        alongRouteBack = await apiGetAlongRoute(placeDestination, placeOrigin, travelTimeBack * 60);
-
-        renderAlongRoute(alongRouteThere, "there");
-        renderAlongRoute(alongRouteBack, "back")
-    });
+    tripForm.addEventListener('submit', submitListener1);
 });
+
+async function submitListener1 (e) {
+    e.preventDefault();
+
+    TRIP.name = this.name.value;
+    TRIP.duration = this.duration.value;
+    TRIP.departure = this.departure.value;
+    TRIP.arrival = this.arrival.value;
+    TRIP.activities = ACTIVITIES;
+
+    X[0].style.display = "none";    // hide current tab
+    X[1].style.display = "block";   // show next tab
+
+    const departureTime = this.departure.value.split(":");
+    const arrivalTime = this.arrival.value.split(":");
+
+    const tripStartInMinutes = departureTime[0] * 60 + parseInt(departureTime[1]);
+    const tripEndInMinutes = arrivalTime[0] * 60 + parseInt(arrivalTime[1]);
+    const tripDuration = (this.duration.value - 1) * DAY + tripEndInMinutes - tripStartInMinutes;
+
+    const placeOrigin = await apiGetPlace(this.origin.value).then(place => place);
+    const placeDestination = await apiGetPlace(this.destination.value).then(place => place);
+
+    const travelTimeThere = (await apiGetRouteTime(placeOrigin, placeDestination).then(time => time) / 60).toFixed(0);
+    const travelTimeBack = (await apiGetRouteTime(placeDestination, placeOrigin).then(time => time) / 60).toFixed(0);
+
+    const start = new Activity(
+        placeOrigin,
+        0,
+        this.departure.value,
+        this.departure.value,
+        0,
+        "ORIGIN"
+    );
+    const destination = new Activity(
+        placeDestination,
+        tripDuration - travelTimeThere - travelTimeBack,
+        timeAfterMinutes(this.departure.value, travelTimeThere),
+        timeBeforeMinutes(this.arrival.value, travelTimeBack),
+        1,
+        "DESTINATION"
+    );
+    const end = new Activity(
+        placeOrigin,
+        0,
+        this.arrival.value,
+        this.arrival.value,
+        2,
+        "ORIGIN"
+    );
+
+    ACTIVITIES.push(start);
+    ACTIVITIES.push(destination);
+    ACTIVITIES.push(end);
+
+    renderActivities();
+
+    ALONG_ROUTE_THERE = await apiGetAlongRoute(placeOrigin, placeDestination, travelTimeThere * 60);
+    ALONG_ROUTE_BACK = await apiGetAlongRoute(placeDestination, placeOrigin, travelTimeBack * 60);
+
+    renderAlongRoute(ALONG_ROUTE_THERE, "there");
+    renderAlongRoute(ALONG_ROUTE_BACK, "back");
+
+    this.removeEventListener("submit",submitListener1);
+    this.addEventListener("submit",submitListener2);
+}
+
+async function submitListener2 (e){
+    e.preventDefault();
+     apiPostTrip();
+}
+
+function apiPostTrip() {
+    fetch(
+        API_HOST + '/app/add-trip',
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": CSRF_TOKEN
+            },
+            body: JSON.stringify(TRIP),
+            method: 'POST'
+        }
+    ).then(response => {
+        // HTTP 301 response
+        // HOW CAN I FOLLOW THE HTTP REDIRECT RESPONSE?
+        if (response.redirected) {
+            window.location.href = response.url;
+        }
+    })
+}
 
 function apiGetPlace(query) {
     return fetch(
-        apihost + '/rest/find-place',
+        API_HOST + '/rest/find-place',
         {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                "X-CSRF-Token": csrfToken
+                "X-CSRF-Token": CSRF_TOKEN
             },
             body: "query=" + query,
             method: 'POST'
@@ -136,11 +174,11 @@ function minutesBetweenTimes(start, end) {
 
 function apiGetRouteTime(origin, destination) {
     return fetch(
-        apihost + '/rest/calculate-route',
+        API_HOST + '/rest/calculate-route',
         {
             headers: {
                 'Content-Type': 'application/json',
-                "X-CSRF-Token": csrfToken
+                "X-CSRF-Token": CSRF_TOKEN
             },
             body: JSON.stringify([origin, destination]),
             method: 'POST'
@@ -156,11 +194,11 @@ function apiGetRouteTime(origin, destination) {
 
 function apiGetAlongRoute(origin, destination, travelTime) {
     return fetch(
-        apihost + '/rest/find-along-route/' + travelTime,
+        API_HOST + '/rest/find-along-route/' + travelTime,
         {
             headers: {
                 'Content-Type': 'application/json',
-                "X-CSRF-Token": csrfToken
+                "X-CSRF-Token": CSRF_TOKEN
             },
             body: JSON.stringify([origin, destination]),
             method: 'POST'
@@ -206,9 +244,9 @@ function renderActivities() {
     while (trip.children.length > 1) {
         trip.removeChild(trip.lastChild);
     }
-    for (let i = 0; i < activities.length - 1; i++) {
-        const current = activities[i];
-        const next = activities[i + 1];
+    for (let i = 0; i < ACTIVITIES.length - 1; i++) {
+        const current = ACTIVITIES[i];
+        const next = ACTIVITIES[i + 1];
 
         renderActivity(current, i * 2 + 1);
         const travel = new Activity(
@@ -221,7 +259,7 @@ function renderActivities() {
         );
         renderActivity(travel, i * 2 + 2);
     }
-    renderActivity(activities[activities.length - 1], activities.length * 2 - 1);
+    renderActivity(ACTIVITIES[ACTIVITIES.length - 1], ACTIVITIES.length * 2 - 1);
 }
 
 function renderAlongRoute(places, direction) {
@@ -247,7 +285,7 @@ function renderAlongRoute(places, direction) {
         const addButton = document.createElement("button");
         addTd.appendChild(addButton);
         tr.appendChild(addTd);
-        addButton.value = "add";
+        addButton.innerText = "add";
         if ("there" === direction) {
             addButton.addEventListener("click", addButtonListenerThere);
         } else {
@@ -300,24 +338,24 @@ async function addToThere(e) {
     const tr = button.parentElement.parentElement;
     const tds = tr.children;
     const name = tds[0].innerText;
-    const placeIndex = alongRouteThere.findIndex(p => p.name === name);
-    const place = alongRouteThere[placeIndex];
+    const placeIndex = ALONG_ROUTE_THERE.findIndex(p => p.name === name);
+    const place = ALONG_ROUTE_THERE[placeIndex];
     const duration = tds[3].lastChild.value;
     const description = tds[4].lastChild.value;
 
     let added = false;
     let difference = 0;
-    for (let i = 1; i < activities.length - 1; i++) {
-        let current = activities[i];
+    for (let i = 1; i < ACTIVITIES.length - 1; i++) {
+        let current = ACTIVITIES[i];
         if (!added && (current.description === "DESTINATION" || current.place.detourOffset > place.detourOffset)) {
-            let previous = activities[i - 1];
-            let next = activities[i];
+            let previous = ACTIVITIES[i - 1];
+            let next = ACTIVITIES[i];
             const arrival = timeAfterMinutes(
                 previous.departure,
                 (await apiGetRouteTime(previous.place, place).then(time => time) / 60).toFixed(0)
             );
             const departure = timeAfterMinutes(arrival, duration);
-            activities.splice(i, 0, new Activity(
+            ACTIVITIES.splice(i, 0, new Activity(
                 place,
                 duration,
                 arrival,
@@ -343,9 +381,9 @@ async function addToThere(e) {
             }
         }
     }
-    activities[activities.length - 1].number++;
+    ACTIVITIES[ACTIVITIES.length - 1].number++;
 
-    alongRouteThere.splice(placeIndex, 1);
+    ALONG_ROUTE_THERE.splice(placeIndex, 1);
     alongThere.removeChild(tr);
     renderActivities();
 }
@@ -357,24 +395,24 @@ async function addToBack(e) {
     const tr = button.parentElement.parentElement;
     const tds = tr.children;
     const name = tds[0].innerText;
-    const placeIndex = alongRouteBack.findIndex(p => p.name === name);
-    const place = alongRouteBack[placeIndex];
+    const placeIndex = ALONG_ROUTE_BACK.findIndex(p => p.name === name);
+    const place = ALONG_ROUTE_BACK[placeIndex];
     const duration = tds[3].lastChild.value;
     const description = tds[4].lastChild.value;
 
     let added = false;
     let difference = 0;
-    for (let i = activities.length - 2; i >= 1; i--) {
-        let current = activities[i];
+    for (let i = ACTIVITIES.length - 2; i >= 1; i--) {
+        let current = ACTIVITIES[i];
         if (!added && (current.description === "DESTINATION" || current.place.detourOffset < place.detourOffset)) {
-            let previous = activities[i];
-            let next = activities[i + 1];
+            let previous = ACTIVITIES[i];
+            let next = ACTIVITIES[i + 1];
             const departure = timeBeforeMinutes(
                 next.arrival,
                 (await apiGetRouteTime(place, next.place).then(time => time) / 60).toFixed(0)
             );
             const arrival = timeBeforeMinutes(departure, duration);
-            activities.splice(i + 1, 0, new Activity(
+            ACTIVITIES.splice(i + 1, 0, new Activity(
                 place,
                 duration,
                 arrival,
@@ -403,9 +441,9 @@ async function addToBack(e) {
             current.number++;
         }
     }
-    activities[activities.length - 1].number++;
+    ACTIVITIES[ACTIVITIES.length - 1].number++;
 
-    alongRouteBack.splice(placeIndex, 1);
+    ALONG_ROUTE_BACK.splice(placeIndex, 1);
     alongBack.removeChild(tr);
     renderActivities();
 }

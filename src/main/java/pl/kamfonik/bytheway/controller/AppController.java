@@ -302,7 +302,14 @@ public class AppController {
     }
 
     @GetMapping("/add-trip")
-    public String addTripForm() {
+    public String addTripForm(Model model) {
+        model.addAttribute("trip",new Trip());
         return "app/tripForm";
+    }
+    @PostMapping("/add-trip")
+    public String addTrip(@RequestBody Trip trip,@AuthenticationPrincipal CurrentUser currentUser) {
+        trip.setUser(currentUser.getUser());
+        tripService.save(trip);
+        return "redirect:/app";
     }
 }

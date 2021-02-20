@@ -2,6 +2,7 @@ package pl.kamfonik.bytheway.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.kamfonik.bytheway.entity.Activity;
 import pl.kamfonik.bytheway.entity.Trip;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.repository.TripRepository;
@@ -10,11 +11,15 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TripServiceDB implements TripService{
+public class TripServiceDB implements TripService {
     private final TripRepository tripRepository;
+    private final PlaceService placeService;
 
     @Override
     public Trip save(Trip trip) {
+        trip.getActivities().stream()
+                .map(Activity::getPlace)
+                .forEach(placeService::save);
         return tripRepository.save(trip);
     }
 

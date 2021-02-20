@@ -50,7 +50,7 @@
         </c:forEach>
     </table>
     <h2></h2>
-    <form method="get" action="<c:url value="/app/add-trip1"/>">
+    <form method="get" action="<c:url value="/app/add-trip"/>">
         <div><input type="submit" value="Add trip"></div>
     </form>
 </div>
