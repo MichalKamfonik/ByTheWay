@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import pl.kamfonik.bytheway.ByTheWayProperties;
+import pl.kamfonik.bytheway.dto.Route;
 import pl.kamfonik.bytheway.entity.*;
 import pl.kamfonik.bytheway.security.CurrentUser;
 import pl.kamfonik.bytheway.service.*;
@@ -22,9 +24,10 @@ public class AppController {
     private final PlanService planService;
     private final CategoryService categoryService;
     private final UserService userService;
-    private final RouteService routeService;
     private final PlaceService placeService;
     private final TripService tripService;
+    private final ByTheWayProperties byTheWayProperties;
+    private final RouteService routeService;
 
     @GetMapping("/initialize")
     public String initializeCategories(@AuthenticationPrincipal CurrentUser user) {
@@ -161,7 +164,15 @@ public class AppController {
                            @PathVariable Long id) {
         User user = currentUser.getUser();
         if (user.isAdmin() || tripService.checkUserTrip(id, user)) {
-            model.addAttribute("trip", tripService.findTripById(id));
+            Trip trip = tripService.findTripById(id);
+            Route route = routeService.getRoute(trip);
+
+            model.addAttribute("trip", trip);
+            model.addAttribute("mappingApiKey",byTheWayProperties.getMapping().getApikey());
+            model.addAttribute("routeForMapping",route.getRouteObjectForMapping());
+            model.addAttribute("mapCenter",route.getRouteCenter());
+            model.addAttribute("mapZoom",route.getMapZoom());
+
             return "/app/showTrip";
         } else {
             return "redirect:/403";

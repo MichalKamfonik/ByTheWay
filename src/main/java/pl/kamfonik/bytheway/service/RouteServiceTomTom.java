@@ -7,10 +7,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import pl.kamfonik.bytheway.ByTheWayProperties;
-import pl.kamfonik.bytheway.dto.RoutesTableDto;
+import pl.kamfonik.bytheway.dto.Route;
+import pl.kamfonik.bytheway.dto.route.RouteDto;
+import pl.kamfonik.bytheway.dto.route.RoutesTableDto;
+import pl.kamfonik.bytheway.entity.Activity;
 import pl.kamfonik.bytheway.entity.Place;
+import pl.kamfonik.bytheway.entity.Trip;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -22,33 +27,46 @@ public class RouteServiceTomTom implements RouteService {
             "https://api.tomtom.com/routing/1/calculateRoute/__LOCATIONS__/json?key=";
 
     @Override
-    public Integer calculateRouteTime(Place origin, Place destination) {
+    public Route getRoute(Place origin, Place destination) {
         String locations =
                 origin.getLat() + "," + origin.getLon() + ":" +
                         destination.getLat() + "," + destination.getLon();
+
+        String url = TOMTOM_ROUTING_API_URL.replace("__LOCATIONS__", locations)
+                + byTheWayProperties.getRouting().getApikey();
+
+        return getRoute(url);
+    }
+
+    @Override
+    public Route getRoute(Trip trip) {
+        String locations = trip.getActivities().stream()
+                .map(Activity::getPlace)
+                .map(p->p.getLat() + "," + p.getLon())
+                .collect(Collectors.joining(":"));
+
+        String url = TOMTOM_ROUTING_API_URL.replace("__LOCATIONS__", locations)
+                + byTheWayProperties.getRouting().getApikey();
+
+        return getRoute(url);
+    }
+
+    private RouteDto getRoute(String url) {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<RoutesTableDto> forEntity;
         try {
             forEntity = restTemplate.getForEntity(
-                    TOMTOM_ROUTING_API_URL.replace("__LOCATIONS__", locations)
-                            + byTheWayProperties.getRouting().getApikey(),
+                    url,
                     RoutesTableDto.class
             );
-        } catch (HttpClientErrorException e){
-            try{
+        } catch (HttpClientErrorException e) {
+            try {
                 Thread.sleep(1000);
-            } catch (InterruptedException exception){
+            } catch (InterruptedException exception) {
                 log.error("Sleep exception"); // log and ignore
             }
-            forEntity = restTemplate.getForEntity(
-                    TOMTOM_ROUTING_API_URL.replace("__LOCATIONS__", locations)
-                            + byTheWayProperties.getRouting().getApikey(),
-                    RoutesTableDto.class
-            );
+            forEntity = restTemplate.getForEntity(url,RoutesTableDto.class);
         }
-        Integer travelTimeInSeconds = Objects.requireNonNull(forEntity.getBody())
-                .getRoutes().get(0).getSummary().getTravelTimeInSeconds();
-        log.debug("travelTimeInSeconds: {}",travelTimeInSeconds);
-        return travelTimeInSeconds;
+        return Objects.requireNonNull(forEntity.getBody()).getRoutes().get(0);
     }
 }

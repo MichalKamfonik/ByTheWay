@@ -14,6 +14,7 @@ public class ByTheWayProperties {
     private final Category category = new Category();
     private final SearchPOI searchPOI = new SearchPOI();
     private final Routing routing = new Routing();
+    private final Mapping mapping = new Mapping();
     @Getter
     @Setter
     @ToString
@@ -30,6 +31,12 @@ public class ByTheWayProperties {
     @Setter
     @ToString
     public static class Routing {
+        private String apikey;
+    }
+    @Getter
+    @Setter
+    @ToString
+    public static class Mapping {
         private String apikey;
     }
 }

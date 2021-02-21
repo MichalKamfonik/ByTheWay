@@ -1,4 +1,4 @@
-package pl.kamfonik.bytheway.dto;
+package pl.kamfonik.bytheway.dto.poi;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

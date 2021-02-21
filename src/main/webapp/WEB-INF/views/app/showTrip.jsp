@@ -7,6 +7,10 @@
 <html>
 <head>
     <title>Show trip</title>
+    <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.6.0/maps/maps.css'>
+    <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.6.0/maps/maps-web.min.js"></script>
+    <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/plugins/DrawingTools/1.1.2/DrawingTools-web.js"></script>
+    <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/plugins/DrawingTools/1.1.2/DrawingTools.css'>
 </head>
 <body>
 <div>Name: ${trip.name}</div>
@@ -53,6 +57,29 @@
     </table>
 </div>
 
+<div id="map" style="width: 100%; height: 100%;"></div>
+<script>
+    const map = tt.map({
+        key: '${mappingApiKey}',
+        container: 'map',
+        zoom: ${mapZoom},
+        center: ${mapCenter.getPosition()}, //somewhere in Poland
+    });
+    map.on('load',function() {
+        map.addLayer({
+            'id': 'overlay',
+            'type': 'line',
+            'source': {
+                'type': 'geojson',
+                'data': ${routeForMapping.json()}
+            },
+            'layout': {},
+            'paint': {
+                'line-width': 5
+            }
+        });
+    });
+</script>
 <form action="<c:url value="/app"/>">
     <input type="submit" value="Back to dashboard">
 </form>

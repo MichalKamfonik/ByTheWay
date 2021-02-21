@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import pl.kamfonik.bytheway.ByTheWayProperties;
-import pl.kamfonik.bytheway.dto.*;
+import pl.kamfonik.bytheway.dto.poi.*;
 import pl.kamfonik.bytheway.entity.Category;
 import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.repository.PlaceRepository;

@@ -1,4 +1,4 @@
-package pl.kamfonik.bytheway.dto;
+package pl.kamfonik.bytheway.dto.category;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

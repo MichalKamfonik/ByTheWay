@@ -1,10 +1,12 @@
-package pl.kamfonik.bytheway.dto;
+package pl.kamfonik.bytheway.dto.route;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RouteDto {
-    private RouteSummaryDto summary;
+public class LegDto {
+    private List<PointDto> points;
 }

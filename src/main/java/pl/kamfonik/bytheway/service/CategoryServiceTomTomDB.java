@@ -7,13 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.kamfonik.bytheway.ByTheWayProperties;
-import pl.kamfonik.bytheway.dto.CategoriesTableDto;
+import pl.kamfonik.bytheway.dto.category.CategoriesTableDto;
 import pl.kamfonik.bytheway.entity.Category;
 import pl.kamfonik.bytheway.repository.CategoryRepository;
 
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Setter
@@ -38,7 +39,7 @@ public class CategoryServiceTomTomDB implements CategoryService {
         ResponseEntity<CategoriesTableDto> forEntity = restTemplate.getForEntity(
                 TOMTOM_CATEGORIES_API_URL + byTheWayProperties.getCategory().getApikey(),
                 CategoriesTableDto.class);
-        forEntity.getBody().getCategories().stream()
+        Objects.requireNonNull(forEntity.getBody()).getCategories().stream()
                 .filter(categoryDto -> categoryDto.getId()<9999L /*only main categories*/)
                 .map(categoryDto -> {
                     Category category = new Category();

@@ -28,7 +28,7 @@ public class RestServiceController {
     @PostMapping("/calculate-route")
     public Integer calculateRoute(@RequestBody List<Place> places) {
         log.debug("calculateRoute incoming request = {}", places);
-        return routeService.calculateRouteTime(places.get(0), places.get(1));
+        return routeService.getRoute(places.get(0), places.get(1)).getRouteTime();
     }
 
     @PostMapping("/find-along-route/{travelTime}")
