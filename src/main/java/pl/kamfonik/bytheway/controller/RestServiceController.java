@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import pl.kamfonik.bytheway.dto.MapDataObject;
+import pl.kamfonik.bytheway.entity.Activity;
 import pl.kamfonik.bytheway.entity.Place;
+import pl.kamfonik.bytheway.entity.Trip;
 import pl.kamfonik.bytheway.security.CurrentUser;
 import pl.kamfonik.bytheway.service.PlaceService;
 import pl.kamfonik.bytheway.service.RouteService;
@@ -46,5 +49,12 @@ public class RestServiceController {
                 currentUser.getUser().getFavoriteCategories());
         log.debug("List: {}", list);
         return list;
+    }
+
+    @PostMapping("/find-route")
+    public MapDataObject getMapDataObject(@RequestBody List<Activity> activities) {
+        Trip trip = new Trip();
+        trip.setActivities(activities);
+        return routeService.getRoute(trip).getMapDataObject();
     }
 }

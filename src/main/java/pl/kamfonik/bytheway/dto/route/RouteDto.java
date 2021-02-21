@@ -2,9 +2,9 @@ package pl.kamfonik.bytheway.dto.route;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import pl.kamfonik.bytheway.dto.MapDataObject;
 import pl.kamfonik.bytheway.dto.Point;
 import pl.kamfonik.bytheway.dto.Route;
-import pl.kamfonik.bytheway.dto.RouteObjectForMapping;
 import pl.kamfonik.bytheway.dto.geojson.GeoJsonFeature;
 import pl.kamfonik.bytheway.dto.geojson.GeoJsonFeatureCollection;
 import pl.kamfonik.bytheway.dto.geojson.GeoJsonGeometry;
@@ -18,7 +18,7 @@ public class RouteDto implements Route {
     private List<LegDto> legs;
 
     @Override
-    public RouteObjectForMapping getRouteObjectForMapping() {
+    public MapDataObject getMapDataObject() {
 
         GeoJsonFeatureCollection geoJsonColl = new GeoJsonFeatureCollection();
         GeoJsonFeature geoRouteJson = new GeoJsonFeature();
@@ -32,7 +32,7 @@ public class RouteDto implements Route {
         );
         geoJsonColl.getFeatures().add(geoRouteJson);
 
-        return geoJsonColl;
+        return new MapDataObject(geoJsonColl,getRouteCenter(),getMapZoom());
     }
 
     @Override

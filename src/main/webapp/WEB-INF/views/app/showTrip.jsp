@@ -62,8 +62,8 @@
     const map = tt.map({
         key: '${mappingApiKey}',
         container: 'map',
-        zoom: ${mapZoom},
-        center: ${mapCenter.getPosition()}, //somewhere in Poland
+        zoom: ${mapDataObject.mapZoom},
+        center: ${mapDataObject.routeCenter.getPositionString()},
     });
     map.on('load',function() {
         map.addLayer({
@@ -71,11 +71,11 @@
             'type': 'line',
             'source': {
                 'type': 'geojson',
-                'data': ${routeForMapping.json()}
+                'data': ${mapDataObject.geoJson.json()}
             },
             'layout': {},
             'paint': {
-                'line-width': 5
+                'line-width': 1
             }
         });
     });

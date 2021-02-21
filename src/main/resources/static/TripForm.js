@@ -25,6 +25,32 @@ document.addEventListener('DOMContentLoaded', function () {
     tripForm.addEventListener('submit', submitListener1);
 });
 
+async function addMap(){
+    const mapData = await apiGetMapData().then(mapData=>mapData);
+    console.log(mapData);
+
+    const map = tt.map({
+        key: mappingApiKey,
+        container: 'map',
+        zoom: mapData.mapZoom,
+        center: mapData.routeCenter.position, //somewhere in Poland
+    });
+    map.on('load', function () {
+        map.addLayer({
+            'id': 'overlay',
+            'type': 'line',
+            'source': {
+                'type': 'geojson',
+                'data': mapData.geoJson
+            },
+            'layout': {},
+            'paint': {
+                'line-width': 1
+            }
+        });
+    });
+}
+
 async function submitListener1(e) {
     e.preventDefault();
 
@@ -74,6 +100,7 @@ async function submitListener1(e) {
     ACTIVITIES.push(end);
 
     renderActivities();
+    await addMap();
 
     ALONG_ROUTE_THERE = await apiGetAlongRoute(placeOrigin, placeDestination, travelTimeThere * 60);
     ALONG_ROUTE_BACK = await apiGetAlongRoute(placeDestination, placeOrigin, travelTimeBack * 60);
@@ -412,6 +439,26 @@ function apiGetRouteTime(origin, destination) {
                 "X-CSRF-Token": CSRF_TOKEN
             },
             body: JSON.stringify([origin, destination]),
+            method: 'POST'
+        }
+    ).then(resp => {
+            if (!resp.ok) {
+                alert(resp.statusText);
+            }
+            return resp.json();
+        }
+    )
+}
+
+function apiGetMapData() {
+    return fetch(
+        API_HOST + '/rest/find-route',
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": CSRF_TOKEN
+            },
+            body: JSON.stringify(ACTIVITIES),
             method: 'POST'
         }
     ).then(resp => {

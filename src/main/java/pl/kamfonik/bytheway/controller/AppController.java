@@ -169,9 +169,7 @@ public class AppController {
 
             model.addAttribute("trip", trip);
             model.addAttribute("mappingApiKey",byTheWayProperties.getMapping().getApikey());
-            model.addAttribute("routeForMapping",route.getRouteObjectForMapping());
-            model.addAttribute("mapCenter",route.getRouteCenter());
-            model.addAttribute("mapZoom",route.getMapZoom());
+            model.addAttribute("mapDataObject",route.getMapDataObject());
 
             return "/app/showTrip";
         } else {
@@ -198,6 +196,7 @@ public class AppController {
     @GetMapping("/add-trip")
     public String addTripForm(Model model) {
         model.addAttribute("trip", new Trip());
+        model.addAttribute("mappingApiKey",byTheWayProperties.getMapping().getApikey());
         return "app/tripForm";
     }
 

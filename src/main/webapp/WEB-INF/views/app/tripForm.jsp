@@ -4,6 +4,10 @@
 <html>
 <head>
     <title>Add trip</title>
+    <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.6.0/maps/maps.css'>
+    <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.6.0/maps/maps-web.min.js"></script>
+    <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/plugins/DrawingTools/1.1.2/DrawingTools-web.js"></script>
+    <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/plugins/DrawingTools/1.1.2/DrawingTools.css'>
 </head>
 <body>
 <form:form method="post" id="tripForm" modelAttribute="trip">
@@ -50,7 +54,12 @@
         </div>
     </div>
     <p><input type="submit"></p>
+    <div id="map" style="width: 100%; height: 100%;">
+    </div>
 </form:form>
+<script>
+    var mappingApiKey = "${mappingApiKey}";
+</script>
 <script src="<c:url value="/TripForm.js"/>"></script>
 </body>
 </html>
