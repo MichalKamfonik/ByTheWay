@@ -16,6 +16,9 @@ let ALONG_ROUTE_THERE = [];
 let ALONG_ROUTE_BACK = [];
 const DAY = 24 * 60;
 let X = document.getElementsByClassName("tab");
+let map;
+let placeOrigin;
+let placeDestination;
 
 document.addEventListener('DOMContentLoaded', function () {
     X[0].style.display = "block";
@@ -25,30 +28,77 @@ document.addEventListener('DOMContentLoaded', function () {
     tripForm.addEventListener('submit', submitListener1);
 });
 
+function createMarkerElement(type) {
+    const element = document.createElement('div');
+    const innerElement = document.createElement('div');
+
+    element.className = 'route-marker';
+    if(type==='start'){
+        innerElement.className = 'icon gg-arrow-right-o';
+    } else if(type === 'end'){
+        innerElement.className = 'icon gg-flag-alt';
+    }
+    element.appendChild(innerElement);
+    return element;
+}
+
 async function addMap(){
     const mapData = await apiGetMapData().then(mapData=>mapData);
-    console.log(mapData);
-
-    const map = tt.map({
-        key: mappingApiKey,
-        container: 'map',
-        zoom: mapData.mapZoom,
-        center: mapData.routeCenter.position, //somewhere in Poland
-    });
-    map.on('load', function () {
+    if (!map){
+        map = tt.map({
+            key: mappingApiKey,
+            container: 'map'
+        });
+        map.on('load', function () {
+            map.addLayer({
+                'id': 'overlay',
+                'type': 'line',
+                'source': {
+                    'type': 'geojson',
+                    'data': mapData
+                },
+                'layout': {},
+                'paint': {
+                    'line-width': 1
+                }
+            });
+            let startPoint = [placeOrigin.lon,placeOrigin.lat];
+            let endPoint = [placeDestination.lon,placeDestination.lat];
+            new tt.Marker({ element: createMarkerElement('start') }).setLngLat(startPoint).addTo(map);
+            new tt.Marker({ element: createMarkerElement('end') }).setLngLat(endPoint).addTo(map);
+            let bounds = new tt.LngLatBounds();
+            mapData.features[0].geometry.coordinates.forEach(function(point) {
+                bounds.extend(tt.LngLat.convert(point));
+            });
+            map.fitBounds(bounds, { duration: 0, padding: 50 });
+        });
+    } else {
+        if(map.getLayer('overlay')){
+            map.removeLayer('overlay');
+            map.removeSource('overlay');
+        }
         map.addLayer({
             'id': 'overlay',
             'type': 'line',
             'source': {
                 'type': 'geojson',
-                'data': mapData.geoJson
+                'data': mapData
             },
             'layout': {},
             'paint': {
                 'line-width': 1
             }
         });
-    });
+        let startPoint = [placeOrigin.lon,placeOrigin.lat];
+        let endPoint = [placeDestination.lon,placeDestination.lat];
+        new tt.Marker({ element: createMarkerElement('start') }).setLngLat(startPoint).addTo(map);
+        new tt.Marker({ element: createMarkerElement('end') }).setLngLat(endPoint).addTo(map);
+        let bounds = new tt.LngLatBounds();
+        mapData.features[0].geometry.coordinates.forEach(function(point) {
+            bounds.extend(tt.LngLat.convert(point));
+        });
+        map.fitBounds(bounds, { duration: 0, padding: 50 });
+    }
 }
 
 async function submitListener1(e) {
@@ -64,8 +114,8 @@ async function submitListener1(e) {
     const tripEndInMinutes = arrivalTime[0] * 60 + parseInt(arrivalTime[1]);
     const tripDuration = (this.duration.value - 1) * DAY + tripEndInMinutes - tripStartInMinutes;
 
-    const placeOrigin = await apiGetPlace(this.origin.value).then(place => place);
-    const placeDestination = await apiGetPlace(this.destination.value).then(place => place);
+    placeOrigin = await apiGetPlace(this.origin.value).then(place => place);
+    placeDestination = await apiGetPlace(this.destination.value).then(place => place);
 
     const travelTimeThere = (await apiGetRouteTime(placeOrigin, placeDestination).then(time => time) / 60).toFixed(0);
     const travelTimeBack = (await apiGetRouteTime(placeDestination, placeOrigin).then(time => time) / 60).toFixed(0);
@@ -100,7 +150,7 @@ async function submitListener1(e) {
     ACTIVITIES.push(end);
 
     renderActivities();
-    await addMap();
+    addMap();
 
     ALONG_ROUTE_THERE = await apiGetAlongRoute(placeOrigin, placeDestination, travelTimeThere * 60);
     ALONG_ROUTE_BACK = await apiGetAlongRoute(placeDestination, placeOrigin, travelTimeBack * 60);
@@ -112,7 +162,7 @@ async function submitListener1(e) {
     this.addEventListener("submit", submitListener2);
 }
 
-async function submitListener2(e) {
+function submitListener2(e) {
     for (let i = 0; i < ACTIVITIES.length; i++) {
         const input1 = document.createElement("input");
         input1.type="hidden";
@@ -200,6 +250,7 @@ function renderActivities() {
         renderActivity(travel, i * 2 + 2);
     }
     renderActivity(ACTIVITIES[ACTIVITIES.length - 1], ACTIVITIES.length * 2 - 1);
+    addMap();
 }
 
 function renderAlongRoute(places, direction) {

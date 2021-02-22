@@ -3,14 +3,14 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@page import="java.time.Duration" %>
 <%@page import="java.lang.Math" %>
+<%@page import="java.util.List" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
     <title>Show trip</title>
     <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.6.0/maps/maps.css'>
+    <link rel='stylesheet' type='text/css' href='/tripFormStyle.css'>
     <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.6.0/maps/maps-web.min.js"></script>
-    <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/plugins/DrawingTools/1.1.2/DrawingTools-web.js"></script>
-    <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/plugins/DrawingTools/1.1.2/DrawingTools.css'>
 </head>
 <body>
 <div>Name: ${trip.name}</div>
@@ -37,6 +37,9 @@
                     <fmt:formatNumber type="number" maxFractionDigits="0" value="${Math.floor(activity.duration%60)}"/>m
                 </td>
                 <td>${activity.description}</td>
+                <c:if test="${activity.description.equals('DESTINATION')}">
+                    <c:set var="destinationIndex" value="${s.index}"/>
+                </c:if>
             </tr>
             <c:if test="${not s.last}">
                 <tr>
@@ -59,11 +62,22 @@
 
 <div id="map" style="width: 100%; height: 100%;"></div>
 <script>
+    function createMarkerElement(type) {
+        const element = document.createElement('div');
+        const innerElement = document.createElement('div');
+
+        element.className = 'route-marker';
+        if(type==='start'){
+            innerElement.className = 'icon gg-arrow-right-o';
+        } else if(type === 'end'){
+            innerElement.className = 'icon gg-flag-alt';
+        }
+        element.appendChild(innerElement);
+        return element;
+    }
     const map = tt.map({
         key: '${mappingApiKey}',
-        container: 'map',
-        zoom: ${mapDataObject.mapZoom},
-        center: ${mapDataObject.routeCenter.getPositionString()},
+        container: 'map'
     });
     map.on('load',function() {
         map.addLayer({
@@ -71,13 +85,23 @@
             'type': 'line',
             'source': {
                 'type': 'geojson',
-                'data': ${mapDataObject.geoJson.json()}
+                'data': ${mapDataObject.json()}
             },
             'layout': {},
             'paint': {
                 'line-width': 1
             }
         });
+        let startPoint = ["${trip.activities[0].place.lon}","${trip.activities[0].place.lat}"];
+        let endPoint = ["${trip.activities[destinationIndex].place.lon}","${trip.activities[destinationIndex].place.lat}"];
+        new tt.Marker({ element: createMarkerElement('start') }).setLngLat(startPoint).addTo(map);
+        new tt.Marker({ element: createMarkerElement('end') }).setLngLat(endPoint).addTo(map);
+        let bounds = new tt.LngLatBounds();
+        let data = ${mapDataObject.json()};
+        data.features[0].geometry.coordinates.forEach(function(point) {
+            bounds.extend(tt.LngLat.convert(point));
+        });
+        map.fitBounds(bounds, { duration: 0, padding: 50 });
     });
 </script>
 <form action="<c:url value="/app"/>">

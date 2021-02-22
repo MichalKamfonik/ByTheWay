@@ -34,7 +34,8 @@ public class PlaceServiceTomTomDB implements PlaceService {
             "https://api.tomtom.com/search/2/poiSearch/__QUERY__.json" +
                     "?typeahead=true" +
                     "&limit=1" +
-                    "&countrySet=PL&key=";
+                    "&countrySet=PL" +
+                    "&key=";
     private static final String TOMTOM_GET_POI_BY_ID_API_URL =
             "https://api.tomtom.com/search/2/place.json" +
                     "?entityId=__ID__&key=";

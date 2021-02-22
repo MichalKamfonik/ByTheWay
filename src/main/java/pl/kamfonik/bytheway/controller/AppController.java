@@ -68,8 +68,10 @@ public class AppController {
     @PostMapping("/categories")
     public String manageCategories(@Valid @ModelAttribute User user,
                                    BindingResult result,
+                                   Model model,
                                    @AuthenticationPrincipal CurrentUser currentUser) {
         if (result.hasErrors()) {
+            model.addAttribute("categories", categoryService.findAllCategories());
             return "app/categories";
         }
         User currentUserUser = currentUser.getUser();
@@ -169,7 +171,7 @@ public class AppController {
 
             model.addAttribute("trip", trip);
             model.addAttribute("mappingApiKey",byTheWayProperties.getMapping().getApikey());
-            model.addAttribute("mapDataObject",route.getMapDataObject());
+            model.addAttribute("mapDataObject",route.getRouteObjectForMapping());
 
             return "/app/showTrip";
         } else {

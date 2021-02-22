@@ -1,8 +1,6 @@
 package pl.kamfonik.bytheway.dto;
 
 public interface Route {
-    MapDataObject getMapDataObject();
+    RouteObjectForMapping getRouteObjectForMapping();
     Integer getRouteTime();
-    Point getRouteCenter();
-    Integer getMapZoom();
 }
