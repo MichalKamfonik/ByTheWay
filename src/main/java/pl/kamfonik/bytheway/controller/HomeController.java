@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.service.UserService;
 
@@ -27,10 +26,7 @@ public class HomeController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user, @RequestParam String selection){
-        if("Cancel".equals(selection)){
-            return "redirect:";
-        }
+    public String registerUser(@ModelAttribute User user){
         if (userService.findByUsername(user.getUsername()) != null){
             return "login/userNameTaken";
         }

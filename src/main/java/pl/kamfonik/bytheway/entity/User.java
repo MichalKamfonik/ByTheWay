@@ -16,6 +16,8 @@ public class User {
     @Column(nullable = false, unique = true, length = 60)
     private String username;
     private String password;
+    @Transient
+    private String repeatedPassword;
     private int enabled;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
