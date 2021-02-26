@@ -16,18 +16,20 @@ document.addEventListener('DOMContentLoaded', function () {
         const plansDiv = document.querySelector("#plansCalendar");
         const days = plansDiv.querySelectorAll(".cell");
         days.forEach(day => {
-            day.classList.remove("active");
             const month = day.parentElement.parentElement.parentElement;
             const date = month.dataset.date.split(" - ")[1]
                 + "-"
                 + String(parseInt(month.dataset.month) + 1).padStart(2, '0')
                 + "-"
                 + day.innerText;
+            if (checkDate(date, zeroDate, today)) {
+                day.classList.remove("active");
+                day.classList.add("disable");
+            }
             userPlans.forEach(plan => {
                 if (checkDate(date, plan.startTime, plan.endTime)) {
                     day.classList.add("active");
-                } else if (checkDate(date, zeroDate, today)) {
-                    day.classList.add("disable");
+                    day.classList.remove("disable");
                 }
             });
         })

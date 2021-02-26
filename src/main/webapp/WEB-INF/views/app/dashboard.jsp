@@ -9,25 +9,22 @@
             <h1 class="h3 mb-0 text-gray-800">ByTheWay</h1>
         </div>
         <div class="row">
-            <a href="<c:url value="/app/add-trip"/>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-map-signs fa-sm text-white-50"></i> Create new trip </a>
-            <a href="<c:url value="/app/add-plan"/>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-calendar-plus fa-sm text-white-50"></i> Create new plan </a>
+            <a href="<c:url value="/app/add-trip"/>" class="d-none d-inline-block btn btn-primary shadow">
+                <i class="fas fa-map-signs text-white-50"></i> Create new trip </a>
+            <a href="<c:url value="/app/add-plan"/>" class="d-none d-inline-block btn btn-primary shadow">
+                <i class="fas fa-calendar-plus text-white-50"></i> Create new plan </a>
             <a href="<c:url value="/app/categories"/>"
-               class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="far fa-star fa-sm text-white-50"></i> Manage categories </a>
-        </div>
-        <sec:authorize access="hasRole('ADMIN')">
-            <div class="row">
+               class="d-none d-inline-block btn btn-primary shadow">
+                <i class="far fa-star text-white-50"></i> Manage categories </a>
+            <sec:authorize access="hasRole('ADMIN')">
                 <a href="<c:url value="/app/initialize"/>"
-                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i class="fas fa-star fa-sm text-white-50"></i> Initialize Categories </a>
+                   class="d-none d-inline-block btn btn-primary shadow">
+                    <i class="fas fa-star text-white-50"></i> Initialize Categories </a>
                 <a href="<c:url value="/app/clear-places"/>"
-                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i class="fas fa-star fa-sm text-white-50"></i> Clear places </a>
-            </div>
-        </sec:authorize>
-
+                   class="d-none d-inline-block btn btn-primary shadow">
+                    <i class="fas fa-broom text-white-50"></i> Clear places </a>
+            </sec:authorize>
+        </div>
 
     </div>
     <div class="row">
@@ -103,12 +100,21 @@
                                         <td>${plan.startTime}</td>
                                         <td>${plan.endTime}</td>
                                         <td>
-                                            <form action="<c:url value="/app/delete/plan/${plan.id}"/>" method="get">
-                                                <input type="submit" value="Delete">
-                                            </form>
-                                            <form action="<c:url value="/app/show/plan/${plan.id}"/>" method="get">
-                                                <input type="submit" value="Show">
-                                            </form>
+                                            <a href="<c:url value="/app/show/plan/${plan.id}"/>"
+                                               class="btn btn-primary btn-icon-split btn-sm">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-flag fa-sm"></i>
+                                        </span>
+                                                <span class="text">Show</span>
+                                            </a>
+                                            <div class="my-2"></div>
+                                            <a href="<c:url value="/app/delete/plan/${plan.id}"/>"
+                                               class="btn btn-danger btn-icon-split btn-sm">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-trash fa-sm"></i>
+                                        </span>
+                                                <span class="text">Delete</span>
+                                            </a>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -155,12 +161,21 @@
                                         <td>${index.count}</td>
                                         <td>${trip.name}</td>
                                         <td>
-                                            <form action="<c:url value="/app/delete/trip/${trip.id}"/>" method="get">
-                                                <input type="submit" value="Delete">
-                                            </form>
-                                            <form action="<c:url value="/app/show/trip/${trip.id}"/>" method="get">
-                                                <input type="submit" value="Show">
-                                            </form>
+                                            <a href="<c:url value="/app/show/trip/${trip.id}"/>"
+                                               class="btn btn-primary btn-icon-split btn-sm">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-flag fa-sm"></i>
+                                        </span>
+                                                <span class="text">Show</span>
+                                            </a>
+                                            <div class="my-2"></div>
+                                            <a href="<c:url value="/app/delete/trip/${trip.id}"/>"
+                                               class="btn btn-danger btn-icon-split btn-sm">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-trash fa-sm"></i>
+                                        </span>
+                                                <span class="text">Delete</span>
+                                            </a>
                                         </td>
                                     </tr>
                                 </c:forEach>
