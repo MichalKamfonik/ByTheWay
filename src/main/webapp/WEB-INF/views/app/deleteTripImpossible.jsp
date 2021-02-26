@@ -6,7 +6,7 @@
 
     <!-- 404 Error Text -->
     <div class="text-center">
-        <div class="error mx-auto" data-text="impossible">Impossible</div>
+        <div class="error mx-auto" data-text="Impossible">Impossible</div>
         <p class="lead text-gray-800 mb-5">Delete trip is not possible</p>
         <p class="text-gray-500 mb-0">
             First delete all plans containing this trip.

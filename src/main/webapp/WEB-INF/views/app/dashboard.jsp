@@ -101,9 +101,9 @@
                                         <td>${plan.endTime}</td>
                                         <td>
                                             <a href="<c:url value="/app/show/plan/${plan.id}"/>"
-                                               class="btn btn-primary btn-icon-split btn-sm">
+                                               class="btn btn-info btn-icon-split btn-sm">
                                         <span class="icon text-white-50">
-                                            <i class="fas fa-flag fa-sm"></i>
+                                            <i class="fas fa-info-circle fa-sm"></i>
                                         </span>
                                                 <span class="text">Show</span>
                                             </a>
@@ -162,9 +162,9 @@
                                         <td>${trip.name}</td>
                                         <td>
                                             <a href="<c:url value="/app/show/trip/${trip.id}"/>"
-                                               class="btn btn-primary btn-icon-split btn-sm">
+                                               class="btn btn-info btn-icon-split btn-sm">
                                         <span class="icon text-white-50">
-                                            <i class="fas fa-flag fa-sm"></i>
+                                            <i class="fas fa-info-circle fa-sm"></i>
                                         </span>
                                                 <span class="text">Show</span>
                                             </a>
