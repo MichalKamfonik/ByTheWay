@@ -1,3 +1,4 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../header.jspf" %>
 
@@ -8,6 +9,9 @@
         background-color: white;
         border: solid black 1px;
         z-index: 1;
+    }
+    .chosen {
+        background: #dc3545;
     }
 </style>
 
@@ -66,6 +70,13 @@
                         <script>
                             const userPlans = ${plans.stream().map(p->p.json()).toList()};
                         </script>
+                        <div style="display: none" id="planForm">
+                            <form:form modelAttribute="plan" method="post" action="/app/add-plan">
+                                <form:select path="trip" items="${trips}" itemLabel="name" itemValue="id"/>
+                                <input type="submit">
+                                <form:hidden path="startTime" id="startTime"/>
+                            </form:form>
+                        </div>
                     </div> <!-- card body -->
                 </div> <!-- collapse show -->
             </div> <!-- card shadow -->

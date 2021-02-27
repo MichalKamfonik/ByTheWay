@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     function updateDays() {
+        const formDiv = document.querySelector("#planForm");
+        formDiv.style.display = "none";
+        let dayChosen = false;
+
         let today = new Date().toISOString().slice(0, 10);
         let zeroDate = '1970-01-01';
         const plansDiv = document.querySelector("#plansCalendar");
@@ -21,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 + "-"
                 + String(parseInt(month.dataset.month) + 1).padStart(2, '0')
                 + "-"
-                + day.innerText;
+                + day.innerText.padStart(2,"0");
             if (checkDate(date, zeroDate, today)) {
                 day.classList.remove("active");
                 day.classList.add("disable");
@@ -43,7 +47,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
             });
-        })
+            if(!day.classList.contains("active") && !day.classList.contains("disable")){
+                day.addEventListener("click",function(e){
+                    if(!dayChosen){
+                        formDiv.style.display = "flex";
+                        this.firstChild.classList.add("chosen");
+                        formDiv.querySelector("#startTime").value = date.split("-").reverse().join("\.");
+                        dayChosen = true;
+                    } else if(this.firstChild.classList.contains("chosen")){
+                        formDiv.style.display = "none";
+                        this.firstChild.classList.remove("chosen");
+                        formDiv.querySelector("#startTime").value = "";
+                        dayChosen = false;
+                    }
+                });
+            }
+        });
     }
 
     function checkDate(dateCheck, dateFrom, dateTo) {

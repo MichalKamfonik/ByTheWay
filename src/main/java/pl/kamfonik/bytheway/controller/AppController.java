@@ -55,6 +55,7 @@ public class AppController {
         model.addAttribute("plans", planService.findUserPlans(user));
         model.addAttribute("trips", tripService.findUserTrips(user));
         model.addAttribute("categories", user.getFavoriteCategories());
+        model.addAttribute("plan", new Plan());
         return "app/dashboard";
     }
 
