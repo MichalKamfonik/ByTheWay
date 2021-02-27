@@ -30,6 +30,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (checkDate(date, plan.startTime, plan.endTime)) {
                     day.classList.add("active");
                     day.classList.remove("disable");
+                    day.addEventListener("mouseover",function (e){
+                        e.stopPropagation();
+                        const planDetails = document.createElement("div");
+                        this.appendChild(planDetails);
+                        planDetails.classList.add("planDetails");
+                        planDetails.innerHTML = "<b>"+plan.trip +"</b><br>from "+ plan.startTime + " to " + plan.endTime;
+                    });
+                    day.addEventListener("mouseout",function (e){
+                        e.stopPropagation();
+                        this.removeChild(this.querySelector(".planDetails"));
+                    });
                 }
             });
         })

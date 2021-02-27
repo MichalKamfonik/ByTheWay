@@ -1,6 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../header.jspf" %>
 
+<style>
+    .planDetails {
+        position: absolute;
+        display: block;
+        background-color: white;
+        border: solid black 1px;
+        z-index: 1;
+    }
+</style>
+
 <!-- Begin Page Content -->
 <div class="container-fluid">
     <!-- Page Heading -->
@@ -100,15 +110,6 @@
                                         <td>${plan.startTime}</td>
                                         <td>${plan.endTime}</td>
                                         <td>
-                                            <a href="<c:url value="/app/show/plan/${plan.id}"/>"
-                                               class="btn btn-info btn-icon-split btn-sm">
-                                        <span class="icon text-white-50">
-                                            <i class="fas fa-info-circle fa-sm"></i>
-                                        </span>
-                                                <span class="text">Show</span>
-                                            </a>
-                                            <div class="my-2"></div>
-
                                             <a href="#" data-toggle="modal" data-target="#deletePlanModal"
                                                class="btn btn-danger btn-icon-split btn-sm"
                                                onclick="updateDeletePlan('${plan.id}','${plan.trip.name}','${plan.startTime}','${plan.endTime}')">

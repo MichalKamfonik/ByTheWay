@@ -128,19 +128,6 @@ public class AppController {
         return "redirect:/app";
     }
 
-    @GetMapping("/show/plan/{id}")
-    public String showPlan(Model model,
-                           @AuthenticationPrincipal CurrentUser currentUser,
-                           @PathVariable Long id) {
-        User user = currentUser.getUser();
-        if (user.isAdmin() || planService.checkUserPlan(id, user)) {
-            model.addAttribute("plan", planService.findPlanById(id));
-            return "/app/showPlan";
-        } else {
-            return "redirect:/403";
-        }
-    }
-
     @GetMapping("/show/trip/{id}")
     public String showTrip(Model model,
                            @AuthenticationPrincipal CurrentUser currentUser,
