@@ -10,18 +10,15 @@ class Activity {
 }
 
 const API_HOST = window.location.origin;
-const CSRF_TOKEN = document.querySelector("#_CSRF_").value;
 const ACTIVITIES = [];
 let ALONG_ROUTE_THERE = [];
 let ALONG_ROUTE_BACK = [];
 const DAY = 24 * 60;
-let X = document.getElementsByClassName("tab");
 let map;
 let placeOrigin;
 let placeDestination;
 
 document.addEventListener('DOMContentLoaded', function () {
-    X[0].style.display = "block";
 
     const tripForm = document.querySelector("#tripForm");
 
@@ -104,8 +101,9 @@ async function addMap(){
 async function submitListener1(e) {
     e.preventDefault();
 
-    X[0].style.display = "none";    // hide current tab
-    X[1].style.display = "block";   // show next tab
+    document.querySelector("#basic").setAttribute("hidden", true);
+    document.querySelector("#secondRow").removeAttribute("hidden");
+    document.querySelector("#thirdRow").removeAttribute("hidden");
 
     const departureTime = this.departure.value.split(":");
     const arrivalTime = this.arrival.value.split(":");
