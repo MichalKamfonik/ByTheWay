@@ -98,36 +98,18 @@ public class AppController {
         return "redirect:/app";
     }
 
-    @GetMapping("/delete/trip/{id}")
-    public String confirmDeleteTrip(Model model,
-                                    @AuthenticationPrincipal CurrentUser currentUser,
-                                    @PathVariable Long id) {
+    @PostMapping("/delete/trip/{id}")
+    public String deleteTrip(@AuthenticationPrincipal CurrentUser currentUser,
+                             @PathVariable Long id) {
         User user = currentUser.getUser();
         if (user.isAdmin() || tripService.checkUserTrip(id, user)) {
             Trip trip = tripService.findTripById(id);
             List<Plan> plans = planService.findPlansByTrip(trip);
             if(plans.isEmpty()) {
-                model.addAttribute("trip", trip);
-                return "/app/confirmDeleteTrip";
+                tripService.delete(id);
             } else {
-                model.addAttribute("plans",plans);
                 return "/app/deleteTripImpossible";
             }
-        } else {
-            return "redirect:/403";
-        }
-    }
-
-    @PostMapping("/delete/trip/{id}")
-    public String deleteTrip(@AuthenticationPrincipal CurrentUser currentUser,
-                             @PathVariable Long id,
-                             @RequestParam String choice) {
-        if ("No".equals(choice)) {
-            return "redirect:/app";
-        }
-        User user = currentUser.getUser();
-        if (user.isAdmin() || tripService.checkUserTrip(id, user)) {
-            tripService.delete(id);
         } else {
             return "redirect:/403";
         }

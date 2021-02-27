@@ -16,7 +16,9 @@
             <h1 class="h3 mb-0 text-gray-800">Show trip</h1>
         </div>
         <div class="row">
-            <a href="<c:url value="/app/delete/trip/${trip.id}"/>" class="d-none d-inline-block btn btn-danger shadow">
+            <a href="#" data-toggle="modal" data-target="#deleteTripModal"
+               class="d-none d-inline-block btn btn-danger shadow"
+               onclick="updateDeleteTrip('${trip.id}','${trip.name}')">
                 <i class="fas fa-trash text-white-50"></i> Delete trip
             </a>
         </div>

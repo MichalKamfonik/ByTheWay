@@ -169,8 +169,9 @@
                                                 <span class="text">Show</span>
                                             </a>
                                             <div class="my-2"></div>
-                                            <a href="<c:url value="/app/delete/trip/${trip.id}"/>"
-                                               class="btn btn-danger btn-icon-split btn-sm">
+                                            <a href="#" data-toggle="modal" data-target="#deleteTripModal"
+                                               class="btn btn-danger btn-icon-split btn-sm"
+                                               onclick="updateDeleteTrip('${trip.id}','${trip.name}')">
                                         <span class="icon text-white-50">
                                             <i class="fas fa-trash fa-sm"></i>
                                         </span>
