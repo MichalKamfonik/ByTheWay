@@ -81,15 +81,6 @@ public class AppController {
         return "redirect:/app";
     }
 
-    @GetMapping("/add-plan")
-    public String addPlanForm(Model model, @AuthenticationPrincipal CurrentUser user) {
-        model.addAttribute("plan", new Plan());
-        model.addAttribute("trips", tripService.findUserTrips(user.getUser()));
-        model.addAttribute("plans", planService.findUserPlans(user.getUser()));
-
-        return "/app/addPlan";
-    }
-
     @PostMapping("/add-plan")
     public String addPlanForm(@ModelAttribute Plan plan, @AuthenticationPrincipal CurrentUser user) {
         plan.setEndTime(plan.getStartTime().plusDays(plan.getTrip().getDuration()));

@@ -25,10 +25,7 @@
         <div class="row">
             <a href="<c:url value="/app/add-trip"/>" class="d-none d-inline-block btn btn-primary shadow">
                 <i class="fas fa-map-signs text-white-50"></i> Create new trip </a>
-            <a href="<c:url value="/app/add-plan"/>" class="d-none d-inline-block btn btn-primary shadow">
-                <i class="fas fa-calendar-plus text-white-50"></i> Create new plan </a>
-            <a href="<c:url value="/app/categories"/>"
-               class="d-none d-inline-block btn btn-primary shadow">
+            <a href="<c:url value="/app/categories"/>" class="d-none d-inline-block btn btn-primary shadow">
                 <i class="far fa-star text-white-50"></i> Manage categories </a>
             <sec:authorize access="hasRole('ADMIN')">
                 <a href="<c:url value="/app/initialize"/>"
@@ -72,8 +69,10 @@
                         </script>
                         <div style="display: none" id="planForm">
                             <form:form modelAttribute="plan" method="post" action="/app/add-plan">
-                                <form:select path="trip" items="${trips}" itemLabel="name" itemValue="id"/>
-                                <input type="submit">
+                                <form:select path="trip" items="${trips}" itemLabel="name" itemValue="id" cssClass="nav-item dropdown"/>
+                                <button type="submit" class="d-none d-inline-block btn btn-primary shadow">
+                                    <i class="fas fa-paper-plane text-white-50"></i> Submit
+                                </button>
                                 <form:hidden path="startTime" id="startTime"/>
                             </form:form>
                         </div>
