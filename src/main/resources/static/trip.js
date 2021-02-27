@@ -19,6 +19,7 @@ let placeOrigin;
 let placeDestination;
 
 document.addEventListener('DOMContentLoaded', function () {
+    document.querySelector("#basic").style.display = "block";
 
     const tripForm = document.querySelector("#tripForm");
 
@@ -27,13 +28,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function createMarkerElement(type) {
     const element = document.createElement('div');
-    const innerElement = document.createElement('div');
+    const innerElement = document.createElement('i');
 
-    element.className = 'route-marker';
+    element.className = 'btn btn-info btn-circle';
+
     if(type==='start'){
-        innerElement.className = 'icon gg-arrow-right-o';
+        innerElement.className = 'fas fa-location-arrow text-white-50';
     } else if(type === 'end'){
-        innerElement.className = 'icon gg-flag-alt';
+        innerElement.className = 'fas fa-flag-checkered text-white-50';
     }
     element.appendChild(innerElement);
     return element;
@@ -101,9 +103,9 @@ async function addMap(){
 async function submitListener1(e) {
     e.preventDefault();
 
-    document.querySelector("#basic").setAttribute("hidden", true);
-    document.querySelector("#secondRow").removeAttribute("hidden");
-    document.querySelector("#thirdRow").removeAttribute("hidden");
+    document.querySelector("#basic").style.display = "none";
+    document.querySelector("#secondRow").style.display = "flex";
+    document.querySelector("#thirdRow").style.display = "flex";
 
     const departureTime = this.departure.value.split(":");
     const arrivalTime = this.arrival.value.split(":");
@@ -270,60 +272,42 @@ function renderAlongRoute(places, direction) {
         const categoriesTd = document.createElement("td");
         categoriesTd.innerText = place.categories.map(c => c.name).reduce((acc, curr) => acc + " " + curr);
         tr.appendChild(categoriesTd);
+        //
+        let durationTd = document.createElement("td");
+        tr.appendChild(durationTd);
+        let durationInput = document.createElement("input");
+        durationInput.type = "number";
+        durationTd.appendChild(durationInput);
+        let descriptionTd = document.createElement("td");
+        tr.appendChild(descriptionTd);
+        let descriptionInput = document.createElement("input");
+        descriptionInput.type = "text";
+        descriptionTd.appendChild(descriptionInput);
+        //
         const addTd = document.createElement("td");
         const addButton = document.createElement("button");
         addTd.appendChild(addButton);
         tr.appendChild(addTd);
-        addButton.innerText = "add";
+        addButton.className = "btn btn-info btn-icon-split btn-sm";
+        addButton.innerHTML =
+            "<span class=\"icon text-white-50\">\n" +
+            "<i class=\"fas fa-plus fa-sm\"></i>\n" +
+            "</span>\n" +
+            "<span class=\"text\">add</span>";
         if ("there" === direction) {
-            addButton.addEventListener("click", addButtonListenerThere);
+            addButton.addEventListener("click", addToThere);
         } else {
-            addButton.addEventListener("click", addButtonListenerBack);
+            addButton.addEventListener("click", addToBack);
         }
 
         alongRoute.appendChild(tr);
     })
 }
 
-function addButtonListenerThere(e) {
-    e.preventDefault();
-    showDurationAndDescription(e, "there");
-}
-
-function addButtonListenerBack(e) {
-    e.preventDefault();
-    showDurationAndDescription(e, "back");
-}
-
-function showDurationAndDescription(e, direction) {
-    e.preventDefault();
-    let button = e.target;
-    let tr = e.target.parentElement.parentElement;
-    let durationTd = document.createElement("td");
-    durationTd.innerText = "Duration: ";
-    tr.insertBefore(durationTd, button.parentElement);
-    let durationInput = document.createElement("input");
-    durationTd.type = "number";
-    durationTd.appendChild(durationInput);
-    let descriptionTd = document.createElement("td");
-    descriptionTd.innerText = "Description: ";
-    tr.insertBefore(descriptionTd, button.parentElement);
-    let descriptionInput = document.createElement("input");
-    descriptionTd.type = "text";
-    descriptionTd.appendChild(descriptionInput);
-    if ("there" === direction) {
-        button.removeEventListener("click", addButtonListenerThere);
-        button.addEventListener("click", addToThere);
-    } else {
-        button.removeEventListener("click", addButtonListenerBack);
-        button.addEventListener("click", addToBack);
-    }
-}
-
 async function addToThere(e) {
     e.preventDefault();
     const alongThere = document.querySelector("#alongThere");
-    const button = e.target;
+    const button = e.target.parentElement;
     const tr = button.parentElement.parentElement;
     const tds = tr.children;
     const name = tds[0].innerText;
@@ -383,7 +367,7 @@ async function addToThere(e) {
 async function addToBack(e) {
     e.preventDefault();
     const alongBack = document.querySelector("#alongBack");
-    const button = e.target;
+    const button = e.target.parentElement;
     const tr = button.parentElement.parentElement;
     const tds = tr.children;
     const name = tds[0].innerText;

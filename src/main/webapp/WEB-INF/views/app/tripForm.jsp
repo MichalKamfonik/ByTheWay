@@ -3,8 +3,16 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.6.0/maps/maps.css'>
-<link rel='stylesheet' type='text/css' href='<c:url value="/trip.css"/>'>
 <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.6.0/maps/maps-web.min.js"></script>
+
+<style>
+    .tab {
+        display: none;
+    }
+    input[type="number"] {
+        width:50px;
+    }
+</style>
 
 <!-- Begin Page Content -->
 <div class="container-fluid">
@@ -24,7 +32,7 @@
         <div class="text-center">
             <form:errors path="arrival" cssClass="lead text-danger mb-5" element="div"/>
         </div>
-        <div class="row" id="basic">
+        <div class="row tab" id="basic">
             <div class="form-group">
                 <form:input path="duration" class="form-control form-control-user"
                             placeholder="Enter trip duration..."/>
@@ -51,7 +59,7 @@
             </div>
         </div>
 
-        <div class="row" hidden id="secondRow">
+        <div class="row tab" id="secondRow">
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
                     <!-- Card Header - Accordion -->
@@ -89,26 +97,26 @@
                     </div> <!-- collapse show plans -->
                 </div> <!-- card shadow -->
             </div>
-            <div class="col-lg-6" id="map">
-<%--                <div class="card shadow mb-4">--%>
-<%--                    <!-- Card Header - Accordion -->--%>
-<%--                    <a href="#mapCard" class="d-block card-header py-3" data-toggle="collapse"--%>
-<%--                       role="button" aria-expanded="true" aria-controls="mapCard">--%>
-<%--                        <h6 class="m-0 font-weight-bold text-primary">Map</h6>--%>
-<%--                    </a>--%>
-<%--                    <!-- Card Content - Collapse -->--%>
-<%--                    <div class="collapse show" id="mapCard">--%>
-<%--                        <div class="card-body">--%>
-<%--                            <div id="map">--%>
-<%--                            </div>--%>
-<%--                        </div> <!-- card body -->--%>
-<%--                    </div> <!-- collapse show plans -->--%>
-<%--                </div> <!-- card shadow -->--%>
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#mapCard" class="d-block card-header py-3" data-toggle="collapse"
+                       role="button" aria-expanded="true" aria-controls="mapCard">
+                        <h6 class="m-0 font-weight-bold text-primary">Map</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse show" id="mapCard">
+                        <div class="card-body">
+                            <div id="map" style="min-height: 500px">
+                            </div>
+                        </div> <!-- card body -->
+                    </div> <!-- collapse show plans -->
+                </div> <!-- card shadow -->
             </div>
         </div>
 
-        <div class="row" hidden id="thirdRow">
-            <div class="col-lg-6">
+        <div class="row tab" id="thirdRow">
+            <div class="col-lg-8">
                 <div class="card shadow mb-4">
                     <!-- Card Header - Accordion -->
                     <a href="#alongThereTable" class="d-block card-header py-3" data-toggle="collapse"
@@ -124,7 +132,9 @@
                                         <th>Name</th>
                                         <th>Address</th>
                                         <th>Categories</th>
-                                        <th colspan="3">Action</th>
+                                        <th>Duration</th>
+                                        <th>Description</th>
+                                        <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tfoot>
@@ -132,7 +142,9 @@
                                         <th>Name</th>
                                         <th>Address</th>
                                         <th>Categories</th>
-                                        <th colspan="3">Action</th>
+                                        <th>Duration</th>
+                                        <th>Description</th>
+                                        <th>Action</th>
                                     </tr>
                                     </tfoot>
                                     <tbody>
@@ -144,12 +156,12 @@
                 </div> <!-- card shadow -->
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-8">
                 <div class="card shadow mb-4">
                     <!-- Card Header - Accordion -->
                     <a href="#alongBackTable" class="d-block card-header py-3" data-toggle="collapse"
                        role="button" aria-expanded="true" aria-controls="alongBackTable">
-                        <h6 class="m-0 font-weight-bold text-primary">User trips table</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Places along route back</h6>
                     </a>
                     <!-- Card Content - Collapse -->
                     <div class="collapse show" id="alongBackTable">
@@ -160,7 +172,9 @@
                                         <th>Name</th>
                                         <th>Address</th>
                                         <th>Categories</th>
-                                        <th colspan="3">Action</th>
+                                        <th>Duration</th>
+                                        <th>Description</th>
+                                        <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tfoot>
@@ -168,7 +182,9 @@
                                         <th>Name</th>
                                         <th>Address</th>
                                         <th>Categories</th>
-                                        <th colspan="3">Action</th>
+                                        <th>Duration</th>
+                                        <th>Description</th>
+                                        <th>Action</th>
                                     </tr>
                                     </tfoot>
                                     <tbody>
