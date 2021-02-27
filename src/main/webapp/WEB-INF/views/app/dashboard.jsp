@@ -108,8 +108,10 @@
                                                 <span class="text">Show</span>
                                             </a>
                                             <div class="my-2"></div>
-                                            <a href="<c:url value="/app/delete/plan/${plan.id}"/>"
-                                               class="btn btn-danger btn-icon-split btn-sm">
+
+                                            <a href="#" data-toggle="modal" data-target="#deletePlanModal"
+                                               class="btn btn-danger btn-icon-split btn-sm"
+                                               onclick="updateDeletePlan('${plan.id}','${plan.trip.name}','${plan.startTime}','${plan.endTime}')">
                                         <span class="icon text-white-50">
                                             <i class="fas fa-trash fa-sm"></i>
                                         </span>
@@ -129,7 +131,7 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <!-- Collapsable Card for plans -->
+            <!-- Collapsable Card for trips -->
             <div class="card shadow mb-4">
                 <!-- Card Header - Accordion -->
                 <a href="#trips" class="d-block card-header py-3" data-toggle="collapse"
@@ -184,7 +186,7 @@
                             </table>
                         </div>
                     </div> <!-- card body -->
-                </div> <!-- collapse show plans -->
+                </div> <!-- collapse show trips -->
             </div> <!-- card shadow -->
         </div> <!-- col -->
 

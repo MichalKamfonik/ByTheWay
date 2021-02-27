@@ -116,17 +116,16 @@ public class AppController {
         return "redirect:/app";
     }
 
-    @GetMapping("/delete/plan/{id}")
-    public String confirmDeletePlan(Model model,
-                                    @AuthenticationPrincipal CurrentUser currentUser,
-                                    @PathVariable Long id) {
+    @PostMapping("/delete/plan/{id}")
+    public String deletePlan(@AuthenticationPrincipal CurrentUser currentUser,
+                             @PathVariable Long id) {
         User user = currentUser.getUser();
         if (user.isAdmin() || planService.checkUserPlan(id, user)) {
-            model.addAttribute("plan", planService.findPlanById(id));
-            return "/app/confirmDeletePlan";
+            planService.delete(id);
         } else {
             return "redirect:/403";
         }
+        return "redirect:/app";
     }
 
     @GetMapping("/show/plan/{id}")
@@ -159,22 +158,6 @@ public class AppController {
         } else {
             return "redirect:/403";
         }
-    }
-
-    @PostMapping("/delete/plan/{id}")
-    public String deletePlan(@AuthenticationPrincipal CurrentUser currentUser,
-                             @PathVariable Long id,
-                             @RequestParam String choice) {
-        if ("No".equals(choice)) {
-            return "redirect:/app";
-        }
-        User user = currentUser.getUser();
-        if (user.isAdmin() || planService.checkUserPlan(id, user)) {
-            planService.delete(id);
-        } else {
-            return "redirect:/403";
-        }
-        return "redirect:/app";
     }
 
     @GetMapping("/add-trip")

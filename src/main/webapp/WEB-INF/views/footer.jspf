@@ -58,10 +58,33 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body">Select "Delete" below if you are sure you want to delete trip <span id="deleteTripName"></span></div>
+            <div class="modal-body">Select "Delete" below if you are sure you want to delete trip <span id="deleteTripName"></span>.</div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                 <form action="" method="post" id="deleteTripForm">
+                    <input type="submit" class="btn btn-danger" value="Delete">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Plan Modal-->
+<div class="modal fade" id="deletePlanModal" tabindex="-1" role="dialog" aria-labelledby="deletePlanModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletePlanModalLabel">Are you sure you want to delete this plan?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Delete" below if you are sure you want to delete plan <span id="deletePlanName"></span>.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <form action="" method="post" id="deletePlanForm">
                     <input type="submit" class="btn btn-danger" value="Delete">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 </form>
@@ -74,6 +97,10 @@
     function updateDeleteTrip(id,name){
         document.querySelector("#deleteTripName").innerText = name;
         document.querySelector("#deleteTripForm").action = "<c:url value="/app/delete/trip/"/>"+id;
+    }
+    function updateDeletePlan(id,name,from,to){
+        document.querySelector("#deletePlanName").innerText = name + " at " + from + " to " + to;
+        document.querySelector("#deletePlanForm").action = "<c:url value="/app/delete/plan/"/>"+id;
     }
 </script>
 
