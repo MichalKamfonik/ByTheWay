@@ -18,11 +18,14 @@ import javax.validation.Valid;
 public class HomeController {
     private final UserService userService;
 
+    // to wyrzucic
     @GetMapping
     public String home() {
         return "home";
     }
 
+    
+    //zostawic, zmienic nazwe kontrolera
     @GetMapping("/register")
     public String registerForm(Model model) {
         model.addAttribute("user", new User());
@@ -31,6 +34,7 @@ public class HomeController {
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute @Valid User user, BindingResult result) {
+//srodek ifa do metody
         if (user.getInitialPassword()!=null && !user.getInitialPassword().equals(user.getRepeatedPassword())) {
             result.addError(
                     new FieldError(
@@ -40,6 +44,7 @@ public class HomeController {
                     )
             );
         }
+        //tutaj tak samo, używac optionali zamiast porownan do nulla
         if (userService.findByUsername(user.getUsername()) != null) {
             result.addError(
                     new FieldError(
