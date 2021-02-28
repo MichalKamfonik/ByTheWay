@@ -45,7 +45,6 @@ public class CategoryServiceTomTomDB implements CategoryService {
                     Category category = new Category();
                     category.setId(categoryDto.getId());
                     category.setName(categoryDto.getName());
-                    log.debug(category.getName());
                     return category;
                 })
                 .forEach(categoryRepository::save);

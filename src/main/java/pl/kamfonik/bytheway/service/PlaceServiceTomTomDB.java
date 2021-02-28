@@ -100,7 +100,7 @@ public class PlaceServiceTomTomDB implements PlaceService {
     }
 
     @Override
-    public List<Place> findAlongRoute(Place origin, Place destination, Integer travelTime, Set<Category> categories) {
+    public List<Place> findAlongRoute(Place origin, Place destination, Integer travelTime, List<Category> categories) {
         String url = getUrl(travelTime, categories);
 
         HttpHeaders headers = new HttpHeaders();
@@ -143,7 +143,7 @@ public class PlaceServiceTomTomDB implements PlaceService {
         placeRepository.deleteAll();
     }
 
-    private String getUrl(Integer travelTime, Set<Category> categories) {
+    private String getUrl(Integer travelTime, List<Category> categories) {
         Integer maxDetourInt = travelTime * MAX_DETOUR_PROCENT / 100;
         if (maxDetourInt > 3600) {
             maxDetourInt = 3600;

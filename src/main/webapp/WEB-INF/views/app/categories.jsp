@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ include file="../header.jspf" %>
 
 <!-- Begin Page Content -->
@@ -18,6 +19,17 @@
 
         <div class="text-center">
             <form:errors path="favoriteCategories" cssClass="lead text-danger mb-5" element="div" />
+
+            <c:forEach items="${user.favoriteCategories}" var="category" varStatus="s">
+                <spring:bind path="favoriteCategories[${s.index}].id">
+                    <c:if test="${status.error}">
+                    <span class="lead text-danger mb-5">
+                            ${status.errorMessage} for value ${category.id}
+                    </span> <br>
+                    </c:if>
+                </spring:bind>
+            </c:forEach>
+
         </div>
     <div class="row">
         <c:forEach items="${categories}" var="category" varStatus="s">

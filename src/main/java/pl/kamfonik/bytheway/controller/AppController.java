@@ -15,7 +15,7 @@ import pl.kamfonik.bytheway.entity.Trip;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.security.CurrentUser;
 import pl.kamfonik.bytheway.service.*;
-import pl.kamfonik.bytheway.validator.UserCategoriesValidationGroup;
+import pl.kamfonik.bytheway.validator.CategoriesValidationGroup;
 
 import java.util.List;
 
@@ -70,7 +70,7 @@ public class AppController {
     }
 
     @PostMapping("/categories")
-    public String manageCategories(@Validated({UserCategoriesValidationGroup.class}) @ModelAttribute User user,
+    public String manageCategories(@Validated({CategoriesValidationGroup.class}) @ModelAttribute User user,
                                    BindingResult result,
                                    Model model,
                                    @AuthenticationPrincipal CurrentUser currentUser) {

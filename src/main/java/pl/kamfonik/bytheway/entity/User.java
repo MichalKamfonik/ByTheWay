@@ -2,13 +2,15 @@ package pl.kamfonik.bytheway.entity;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import pl.kamfonik.bytheway.validator.UserCategoriesValidationGroup;
+import pl.kamfonik.bytheway.validator.CategoriesValidationGroup;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -51,10 +53,10 @@ public class User {
     private Set<Role> roles;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @Size(max = 10, groups={UserCategoriesValidationGroup.class, Default.class})
+    @Size(max = 10, groups={CategoriesValidationGroup.class, Default.class})
     @JoinTable(name = "user_category", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<Category> favoriteCategories;
+    private List<@Valid Category> favoriteCategories;
 
     public boolean isAdmin(){
         return roles.stream().anyMatch(r -> "ROLE_ADMIN".equals(r.getName()));
