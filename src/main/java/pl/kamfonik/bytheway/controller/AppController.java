@@ -6,14 +6,17 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.kamfonik.bytheway.ByTheWayProperties;
 import pl.kamfonik.bytheway.dto.Route;
-import pl.kamfonik.bytheway.entity.*;
+import pl.kamfonik.bytheway.entity.Plan;
+import pl.kamfonik.bytheway.entity.Trip;
+import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.security.CurrentUser;
 import pl.kamfonik.bytheway.service.*;
+import pl.kamfonik.bytheway.validator.UserCategoriesValidationGroup;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -67,7 +70,7 @@ public class AppController {
     }
 
     @PostMapping("/categories")
-    public String manageCategories(@Valid @ModelAttribute User user,
+    public String manageCategories(@Validated({UserCategoriesValidationGroup.class}) @ModelAttribute User user,
                                    BindingResult result,
                                    Model model,
                                    @AuthenticationPrincipal CurrentUser currentUser) {

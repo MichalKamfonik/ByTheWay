@@ -44,16 +44,25 @@
                             <div class="form-group">
                                 <form:input class="form-control form-control-user" id="exampleInputEmail"
                                        placeholder="User Name" path="username"/>
+                                <div class="text-center">
+                                    <form:errors path="username" cssClass="lead text-danger mb-5" element="small" />
+                                </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                     <form:password class="form-control form-control-user"
-                                           id="exampleInputPassword" placeholder="Password" path="password"/>
+                                           id="exampleInputPassword" placeholder="Password" path="initialPassword"/>
+                                    <div class="text-center">
+                                        <form:errors path="initialPassword" cssClass="lead text-danger mb-5" element="small" />
+                                    </div>
                                 </div>
                                 <div class="col-sm-6">
-                                    <form:input type="password" class="form-control form-control-user"
+                                    <form:password class="form-control form-control-user"
                                            id="exampleRepeatPassword" placeholder="Repeat Password"
                                                 path="repeatedPassword"/>
+                                    <div class="text-center">
+                                        <form:errors path="repeatedPassword" cssClass="lead text-danger mb-5" element="small" />
+                                    </div>
                                 </div>
                             </div>
                             <input type="submit" class="btn btn-primary btn-user btn-block" value="Register Account">

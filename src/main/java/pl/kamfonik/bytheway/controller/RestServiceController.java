@@ -24,13 +24,11 @@ public class RestServiceController {
 
     @PostMapping("/find-place")
     public Place findPlace(@RequestParam String query) {
-        log.debug("findPlace incoming request = {}", query);
         return placeService.findPlaceByQuery(query);
     }
 
     @PostMapping("/calculate-route")
     public Integer calculateRoute(@RequestBody List<Place> places) {
-        log.debug("calculateRoute incoming request = {}", places);
         return routeService.getRoute(places.get(0), places.get(1)).getRouteTime();
     }
 
@@ -39,16 +37,11 @@ public class RestServiceController {
             @RequestBody List<Place> places,
             @PathVariable Integer travelTime,
             @AuthenticationPrincipal CurrentUser currentUser) {
-        log.debug("calculateRoute incoming request = {}", places);
-        log.debug("travel time: {}", travelTime);
-        log.debug("current user categories: {}", currentUser.getUser().getFavoriteCategories());
-        List<Place> list = placeService.findAlongRoute(
+        return placeService.findAlongRoute(
                 places.get(0),
                 places.get(1),
                 travelTime,
                 currentUser.getUser().getFavoriteCategories());
-        log.debug("List: {}", list);
-        return list;
     }
 
     @PostMapping("/find-route")
