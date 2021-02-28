@@ -21,16 +21,12 @@ import java.util.List;
 public class RestServiceController {
     private final PlaceService placeService;
     private final RouteService routeService;
-
+//do druigiego
     @PostMapping("/find-place")
     public Place findPlace(@RequestParam String query) {
         return placeService.findPlaceByQuery(query);
     }
 
-    @PostMapping("/calculate-route")
-    public Integer calculateRoute(@RequestBody List<Place> places) {
-        return routeService.getRoute(places.get(0), places.get(1)).getRouteTime();
-    }
 
     @PostMapping("/find-along-route/{travelTime}")
     public List<Place> findAlongRoute(
@@ -43,11 +39,17 @@ public class RestServiceController {
                 travelTime,
                 currentUser.getUser().getFavoriteCategories());
     }
-
+//1 kontroler
     @PostMapping("/find-route")
     public RouteObjectForMapping getRouteObjectForMapping(@RequestBody List<Activity> activities) {
         Trip trip = new Trip();
         trip.setActivities(activities);
         return routeService.getRoute(trip).getRouteObjectForMapping();
     }
+    
+        @PostMapping("/calculate-route")
+    public Integer calculateRoute(@RequestBody List<Place> places) {
+        return routeService.getRoute(places.get(0), places.get(1)).getRouteTime();
+    }
+
 }
