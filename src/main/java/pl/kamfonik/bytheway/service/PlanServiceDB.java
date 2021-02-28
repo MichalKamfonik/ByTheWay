@@ -33,7 +33,7 @@ public class PlanServiceDB implements PlanService{
 
     @Override
     public Boolean checkUserPlan(Long id, User user) {
-        return findPlanById(id).getUser().equals(user);
+        return findPlanById(id).getUser().getId().equals(user.getId());
     }
 
     @Override

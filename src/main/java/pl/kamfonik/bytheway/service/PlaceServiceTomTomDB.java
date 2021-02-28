@@ -3,7 +3,10 @@ package pl.kamfonik.bytheway.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -16,7 +19,6 @@ import pl.kamfonik.bytheway.repository.PlaceRepository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -194,7 +196,7 @@ public class PlaceServiceTomTomDB implements PlaceService {
                                 .collect(Collectors.toList())
                 )
         );
-        log.debug("result class = {}",result.getClass());
+
         if(result instanceof SearchAlongRouteResultDto){
             place.setDetourOffset(((SearchAlongRouteResultDto) result).getDetourOffset());
         } else {

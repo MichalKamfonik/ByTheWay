@@ -17,6 +17,7 @@ import pl.kamfonik.bytheway.security.CurrentUser;
 import pl.kamfonik.bytheway.service.*;
 import pl.kamfonik.bytheway.validator.CategoriesValidationGroup;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -150,7 +151,7 @@ public class AppController {
     }
 
     @PostMapping("/add-trip")
-    public String addTrip(@ModelAttribute Trip trip, @AuthenticationPrincipal CurrentUser currentUser) {
+    public String addTrip(@Valid @ModelAttribute Trip trip, @AuthenticationPrincipal CurrentUser currentUser) {
         trip.setUser(currentUser.getUser());
         tripService.save(trip);
         return "redirect:/app";

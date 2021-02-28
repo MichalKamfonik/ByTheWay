@@ -35,7 +35,7 @@ public class TripServiceDB implements TripService {
 
     @Override
     public Boolean checkUserTrip(Long id, User user) {
-        return findTripById(id).getUser().equals(user);
+        return findTripById(id).getUser().getId().equals(user.getId());
     }
 
     @Override
