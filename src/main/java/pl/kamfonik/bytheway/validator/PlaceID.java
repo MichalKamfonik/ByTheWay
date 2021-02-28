@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PlaceID {
-    String message() default "{pl.kamfonik.bytheway.validator.Category.message}";
+    String message() default "{pl.kamfonik.bytheway.validator.PlaceID.message}";
 
     Class<?>[] groups() default {};
 

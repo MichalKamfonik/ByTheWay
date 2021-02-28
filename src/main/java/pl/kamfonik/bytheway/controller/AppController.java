@@ -15,9 +15,9 @@ import pl.kamfonik.bytheway.entity.Trip;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.security.CurrentUser;
 import pl.kamfonik.bytheway.service.*;
-import pl.kamfonik.bytheway.validator.CategoriesValidationGroup;
+import pl.kamfonik.bytheway.validator.UserFormValidation;
 
-import javax.validation.Valid;
+import javax.validation.groups.Default;
 import java.util.List;
 
 @Controller
@@ -71,7 +71,7 @@ public class AppController {
     }
 
     @PostMapping("/categories")
-    public String manageCategories(@Validated({CategoriesValidationGroup.class}) @ModelAttribute User user,
+    public String manageCategories(@Validated({UserFormValidation.class}) @ModelAttribute User user,
                                    BindingResult result,
                                    Model model,
                                    @AuthenticationPrincipal CurrentUser currentUser) {
@@ -101,7 +101,7 @@ public class AppController {
         if (user.isAdmin() || tripService.checkUserTrip(id, user)) {
             Trip trip = tripService.findTripById(id);
             List<Plan> plans = planService.findPlansByTrip(trip);
-            if(plans.isEmpty()) {
+            if (plans.isEmpty()) {
                 tripService.delete(id);
             } else {
                 return "/app/deleteTripImpossible";
@@ -134,8 +134,8 @@ public class AppController {
             Route route = routeService.getRoute(trip);
 
             model.addAttribute("trip", trip);
-            model.addAttribute("mappingApiKey",byTheWayProperties.getMapping().getApikey());
-            model.addAttribute("mapDataObject",route.getRouteObjectForMapping());
+            model.addAttribute("mappingApiKey", byTheWayProperties.getMapping().getApikey());
+            model.addAttribute("mapDataObject", route.getRouteObjectForMapping());
 
             return "/app/showTrip";
         } else {
@@ -146,14 +146,19 @@ public class AppController {
     @GetMapping("/add-trip")
     public String addTripForm(Model model) {
         model.addAttribute("trip", new Trip());
-        model.addAttribute("mappingApiKey",byTheWayProperties.getMapping().getApikey());
+        model.addAttribute("mappingApiKey", byTheWayProperties.getMapping().getApikey());
         return "app/tripForm";
     }
 
     @PostMapping("/add-trip")
-    public String addTrip(@Valid @ModelAttribute Trip trip, @AuthenticationPrincipal CurrentUser currentUser) {
-        trip.setUser(currentUser.getUser());
-        tripService.save(trip);
+    public String addTrip(
+            @Validated({Default.class, UserFormValidation.class}) @ModelAttribute Trip trip,
+            BindingResult result,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        if (!result.hasErrors()) {
+            trip.setUser(currentUser.getUser());
+            tripService.save(trip);
+        }
         return "redirect:/app";
     }
 }

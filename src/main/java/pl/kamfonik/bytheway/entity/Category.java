@@ -2,11 +2,12 @@ package pl.kamfonik.bytheway.entity;
 
 import lombok.Data;
 import pl.kamfonik.bytheway.validator.CategoryID;
-import pl.kamfonik.bytheway.validator.CategoriesValidationGroup;
+import pl.kamfonik.bytheway.validator.UserFormValidation;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
 @Entity
@@ -15,10 +16,11 @@ import javax.validation.groups.Default;
 public class Category {
     @Id
     @NotNull
-    @CategoryID(message = "Category's ID is not correct", groups={CategoriesValidationGroup.class})
+    @CategoryID(message = "Category's ID is not correct", groups={UserFormValidation.class})
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @NotBlank(groups={CategoriesValidationGroup.class, Default.class})
+    @Size(max = 255)
+    @NotBlank(groups={UserFormValidation.class, Default.class})
     private String name;
 }

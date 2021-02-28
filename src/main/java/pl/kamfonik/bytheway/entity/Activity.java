@@ -2,8 +2,12 @@ package pl.kamfonik.bytheway.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.kamfonik.bytheway.validator.UserFormValidation;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+import javax.validation.groups.Default;
 import java.time.LocalTime;
 
 @Entity
@@ -13,14 +17,33 @@ import java.time.LocalTime;
 public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Null(groups = {UserFormValidation.class})
     private Long id;
+
+    @Size(max = 255, groups = {UserFormValidation.class, Default.class})
     private String description;
+
     @ManyToOne
     @JoinColumn(name = "place_id")
-    private Place place;
+    @NotNull(groups = {UserFormValidation.class, Default.class})
+    private @Valid Place place;
+
+    @NotNull(groups = {UserFormValidation.class, Default.class})
+    @PositiveOrZero(groups = {UserFormValidation.class, Default.class})
+    @Column(nullable = false)
     private Integer duration;
+
+    @NotNull(groups = {UserFormValidation.class, Default.class})
+    @Column(nullable = false)
     private LocalTime arrival;
+
+    @NotNull(groups = {UserFormValidation.class, Default.class})
+    @Column(nullable = false)
     private LocalTime departure;
+
+    @NotNull(groups = {UserFormValidation.class, Default.class})
+    @PositiveOrZero(groups = {UserFormValidation.class, Default.class})
+    @Column(nullable = false)
     private Integer number;
 
     public Activity(String description, Place place, Integer duration, LocalTime arrival, LocalTime departure, Integer number) {

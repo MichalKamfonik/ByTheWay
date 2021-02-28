@@ -2,7 +2,7 @@ package pl.kamfonik.bytheway.entity;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import pl.kamfonik.bytheway.validator.CategoriesValidationGroup;
+import pl.kamfonik.bytheway.validator.UserFormValidation;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -53,7 +53,7 @@ public class User {
     private Set<Role> roles;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @Size(max = 10, groups={CategoriesValidationGroup.class, Default.class})
+    @Size(max = 10, groups={UserFormValidation.class, Default.class})
     @JoinTable(name = "user_category", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<@Valid Category> favoriteCategories;
