@@ -95,7 +95,8 @@ public class AppController {
     }
 
     @PostMapping("/delete/trip/{id}")
-    public String deleteTrip(@AuthenticationPrincipal CurrentUser currentUser,
+    public String deleteTrip(Model model,
+                             @AuthenticationPrincipal CurrentUser currentUser,
                              @PathVariable Long id) {
         User user = currentUser.getUser();
         if (user.isAdmin() || tripService.checkUserTrip(id, user)) {
@@ -104,6 +105,7 @@ public class AppController {
             if (plans.isEmpty()) {
                 tripService.delete(id);
             } else {
+                model.addAttribute("plans",plans);
                 return "/app/deleteTripImpossible";
             }
         } else {
