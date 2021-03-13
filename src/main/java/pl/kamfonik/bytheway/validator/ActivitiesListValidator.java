@@ -1,9 +1,7 @@
 package pl.kamfonik.bytheway.validator;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.kamfonik.bytheway.entity.Activity;
-import pl.kamfonik.bytheway.service.CategoryService;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
