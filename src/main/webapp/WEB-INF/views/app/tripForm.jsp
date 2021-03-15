@@ -30,16 +30,18 @@
         </div>
 
         <div class="text-center">
-            <form:errors path="arrival" cssClass="lead text-danger mb-5" element="div"/>
+            <form:errors cssClass="lead text-danger mb-5" element="div"/>
         </div>
         <div class="row tab" id="basic">
             <div class="form-group">
                 <form:input path="duration" class="form-control form-control-user"
                             placeholder="Enter trip duration..."/>
+                <form:errors path="duration" cssClass="lead text-danger mb-5"/>
             </div>
             <div class="form-group">
                 <form:input path="name" class="form-control form-control-user"
                             placeholder="Enter trip name..."/>
+                <form:errors path="name" cssClass="lead text-danger mb-5"/>
             </div>
             <div class="form-group">
                 <input type="text" class="form-control form-control-user"
@@ -52,10 +54,12 @@
             <div class="form-group">
                 <form:input path="departure" class="form-control form-control-user"
                             placeholder="Enter departure hour..."/>
+                <form:errors path="departure" cssClass="lead text-danger mb-5"/>
             </div>
             <div class="form-group">
                 <form:input path="arrival" class="form-control form-control-user"
                             placeholder="Enter comeback hour..."/>
+                <form:errors path="arrival" cssClass="lead text-danger mb-5"/>
             </div>
         </div>
 

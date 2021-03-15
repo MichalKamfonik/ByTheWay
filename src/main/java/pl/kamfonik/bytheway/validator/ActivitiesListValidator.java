@@ -22,7 +22,7 @@ public class ActivitiesListValidator implements ConstraintValidator<ActivitiesLi
 
         int i = 0;
         for (Activity activity : value) {
-            if(!activity.getNumber().equals(i) || activity.getDuration()<0){
+            if(!activity.getNumber().equals(i)){
                 return false;
             }
             i++;

@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.kamfonik.bytheway.ByTheWayProperties;
@@ -105,7 +106,7 @@ public class AppController {
             if (plans.isEmpty()) {
                 tripService.delete(id);
             } else {
-                model.addAttribute("plans",plans);
+                model.addAttribute("plans", plans);
                 return "/app/deleteTripImpossible";
             }
         } else {
@@ -156,11 +157,15 @@ public class AppController {
     public String addTrip(
             @Validated({Default.class, UserFormValidation.class}) @ModelAttribute Trip trip,
             BindingResult result,
-            @AuthenticationPrincipal CurrentUser currentUser) {
-        if (!result.hasErrors()) {
-            trip.setUser(currentUser.getUser());
-            tripService.save(trip);
+            @AuthenticationPrincipal CurrentUser currentUser,
+            Model model) {
+        if (result.hasErrors()) {
+            result.addError(new ObjectError("trip","Incorrect data, please try again"));
+            model.addAttribute("mappingApiKey", byTheWayProperties.getMapping().getApikey());
+            return "app/tripForm";
         }
+        trip.setUser(currentUser.getUser());
+        tripService.save(trip);
         return "redirect:/app";
     }
 }
