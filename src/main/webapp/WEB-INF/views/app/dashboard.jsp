@@ -67,15 +67,16 @@
                         <script>
                             const userPlans = ${plans.stream().map(p->p.json()).toList()};
                         </script>
+                        <form:form modelAttribute="plan" method="post" action="/app/add-plan">
+                            <form:errors cssClass="lead text-danger mb-5"/>
                         <div style="display: none" id="planForm">
-                            <form:form modelAttribute="plan" method="post" action="/app/add-plan">
                                 <form:select path="trip" items="${trips}" itemLabel="name" itemValue="id" cssClass="nav-item dropdown"/>
                                 <button type="submit" class="d-none d-inline-block btn btn-primary shadow">
                                     <i class="fas fa-paper-plane text-white-50"></i> Submit
                                 </button>
                                 <form:hidden path="startTime" id="startTime"/>
-                            </form:form>
                         </div>
+                        </form:form>
                     </div> <!-- card body -->
                 </div> <!-- collapse show -->
             </div> <!-- card shadow -->

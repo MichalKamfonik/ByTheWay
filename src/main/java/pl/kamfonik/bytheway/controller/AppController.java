@@ -87,9 +87,22 @@ public class AppController {
     }
 
     @PostMapping("/add-plan")
-    public String addPlanForm(@ModelAttribute Plan plan, @AuthenticationPrincipal CurrentUser user) {
+    public String addPlanForm(
+            @ModelAttribute @Validated({Default.class, UserFormValidation.class}) Plan plan,
+            BindingResult result,
+            @AuthenticationPrincipal CurrentUser currentUser,
+            Model model) {
+        if(result.hasErrors()){
+            result.getAllErrors().forEach(e->log.debug(e.toString()));
+            result.addError(new ObjectError("plan","Incorrect data, please try again"));
+            User user = currentUser.getUser();
+            model.addAttribute("plans", planService.findUserPlans(user));
+            model.addAttribute("trips", tripService.findUserTrips(user));
+            model.addAttribute("categories", user.getFavoriteCategories());
+            return "app/dashboard";
+        }
         plan.setEndTime(plan.getStartTime().plusDays(plan.getTrip().getDuration()));
-        plan.setUser(user.getUser());
+        plan.setUser(currentUser.getUser());
         planService.save(plan);
 
         return "redirect:/app";

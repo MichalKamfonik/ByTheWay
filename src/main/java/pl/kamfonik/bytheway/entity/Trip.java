@@ -2,12 +2,12 @@ package pl.kamfonik.bytheway.entity;
 
 import lombok.Data;
 import pl.kamfonik.bytheway.validator.ActivitiesList;
+import pl.kamfonik.bytheway.validator.TripID;
 import pl.kamfonik.bytheway.validator.UserFormValidation;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
@@ -20,7 +20,7 @@ import java.util.List;
 public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Null(groups = {UserFormValidation.class})
+    @TripID(message = "Trip's ID is not correct", groups = {UserFormValidation.class})
     private Long id;
 
     @NotNull(groups = {UserFormValidation.class, Default.class})
@@ -46,6 +46,5 @@ public class Trip {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @Null(groups = {UserFormValidation.class})
     private User user;
 }
