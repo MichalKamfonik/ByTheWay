@@ -162,7 +162,7 @@ async function submitListener1(e) {
     this.addEventListener("submit", submitListener2);
 }
 
-function submitListener2(e) {
+function submitListener2() {
     for (let i = 0; i < ACTIVITIES.length; i++) {
         const input1 = document.createElement("input");
         input1.type="hidden";
@@ -321,7 +321,7 @@ async function addToThere(e) {
     let destinationIndex = -1;
     for (let i = 1; i < ACTIVITIES.length - 1; i++) {
         let current = ACTIVITIES[i];
-        if (!added && (current.description === "DESTINATION" || current.place.detourOffset > place.detourOffset)) {
+        if (!added && (current.description === "DESTINATION" || current.place.number > place.number)) {
             let previous = ACTIVITIES[i - 1];
             let next = ACTIVITIES[i];
             const arrival = timeAfterMinutes(
@@ -380,7 +380,7 @@ async function addToBack(e) {
     let difference = 0;
     for (let i = ACTIVITIES.length - 2; i >= 1; i--) {
         let current = ACTIVITIES[i];
-        if (!added && (current.description === "DESTINATION" || current.place.detourOffset < place.detourOffset)) {
+        if (!added && (current.description === "DESTINATION" || current.place.number < place.number)) {
             let previous = ACTIVITIES[i];
             let next = ACTIVITIES[i + 1];
             const departure = timeBeforeMinutes(
