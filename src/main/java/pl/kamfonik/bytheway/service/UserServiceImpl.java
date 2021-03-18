@@ -11,6 +11,7 @@ import pl.kamfonik.bytheway.repository.UserRepository;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "bytheway", name = "registration", havingValue = "enabled")
@@ -21,7 +22,7 @@ public class UserServiceImpl implements UserService{
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public User findByUsername(String name) {
+    public Optional<User> findByUsername(String name) {
         return userRepository.findByUsername(name);
     }
 

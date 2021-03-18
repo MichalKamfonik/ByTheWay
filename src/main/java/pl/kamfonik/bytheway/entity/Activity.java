@@ -2,6 +2,7 @@ package pl.kamfonik.bytheway.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import pl.kamfonik.bytheway.validator.UserFormValidation;
 
 import javax.persistence.*;
@@ -35,10 +36,12 @@ public class Activity {
 
     @NotNull(groups = {UserFormValidation.class, Default.class})
     @Column(nullable = false)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     private LocalTime arrival;
 
     @NotNull(groups = {UserFormValidation.class, Default.class})
     @Column(nullable = false)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     private LocalTime departure;
 
     @NotNull(groups = {UserFormValidation.class, Default.class})

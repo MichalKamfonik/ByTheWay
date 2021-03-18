@@ -425,7 +425,7 @@ async function addToBack(e) {
 
 function apiGetPlace(query) {
     return fetch(
-        API_HOST + '/rest/find-place',
+        API_HOST + '/place/find',
         {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -445,7 +445,7 @@ function apiGetPlace(query) {
 
 function apiGetAlongRoute(origin, destination, travelTime) {
     return fetch(
-        API_HOST + '/rest/find-along-route/' + travelTime,
+        API_HOST + '/place/find-along-route/' + travelTime,
         {
             headers: {
                 'Content-Type': 'application/json',
@@ -465,7 +465,7 @@ function apiGetAlongRoute(origin, destination, travelTime) {
 
 function apiGetRouteTime(origin, destination) {
     return fetch(
-        API_HOST + '/rest/calculate-route',
+        API_HOST + '/route/calculate',
         {
             headers: {
                 'Content-Type': 'application/json',
@@ -485,7 +485,7 @@ function apiGetRouteTime(origin, destination) {
 
 function apiGetMapData() {
     return fetch(
-        API_HOST + '/rest/find-route',
+        API_HOST + '/route/find',
         {
             headers: {
                 'Content-Type': 'application/json',

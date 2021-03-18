@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.repository.UserRepository;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "bytheway", name = "registration", havingValue = "disabled")
 @Slf4j
@@ -15,7 +17,7 @@ public class UserServiceDisabled implements UserService{
     private final UserRepository userRepository;
 
     @Override
-    public User findByUsername(String name) {
+    public Optional<User> findByUsername(String name) {
         return userRepository.findByUsername(name);
     }
 

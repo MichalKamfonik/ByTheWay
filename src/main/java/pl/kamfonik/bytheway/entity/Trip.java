@@ -1,6 +1,7 @@
 package pl.kamfonik.bytheway.entity;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 import pl.kamfonik.bytheway.validator.ActivitiesList;
 import pl.kamfonik.bytheway.validator.TripID;
 import pl.kamfonik.bytheway.validator.UserFormValidation;
@@ -39,9 +40,11 @@ public class Trip {
     private List<@Valid Activity> activities;
 
     @NotNull(groups = {UserFormValidation.class, Default.class})
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     private LocalTime departure;
 
     @NotNull(groups = {UserFormValidation.class, Default.class})
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     private LocalTime arrival;
 
     @ManyToOne

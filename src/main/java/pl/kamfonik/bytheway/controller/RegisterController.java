@@ -8,30 +8,27 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.service.UserService;
 
 import javax.validation.Valid;
 
 @Controller
+@RequestMapping("/register")
 @RequiredArgsConstructor
-public class HomeController {
+public class RegisterController {
     private final UserService userService;
 
     @GetMapping
-    public String home() {
-        return "home";
-    }
-
-    @GetMapping("/register")
     public String registerForm(Model model) {
         model.addAttribute("user", new User());
         return "login/register";
     }
 
-    @PostMapping("/register")
+    @PostMapping
     public String registerUser(@ModelAttribute @Valid User user, BindingResult result) {
-        if (user.getInitialPassword()!=null && !user.getInitialPassword().equals(user.getRepeatedPassword())) {
+        if (!passwordsMatch(user)) {
             result.addError(
                     new FieldError(
                             "user",
@@ -40,7 +37,7 @@ public class HomeController {
                     )
             );
         }
-        if (userService.findByUsername(user.getUsername()) != null) {
+        if (userExists(user)) {
             result.addError(
                     new FieldError(
                             "user",
@@ -58,5 +55,13 @@ public class HomeController {
         } else {
             return "login/registryFail";
         }
+    }
+
+    private boolean userExists(User user) {
+        return userService.findByUsername(user.getUsername()).isPresent();
+    }
+
+    private boolean passwordsMatch(User user) {
+        return user.getInitialPassword().equals(user.getRepeatedPassword());
     }
 }

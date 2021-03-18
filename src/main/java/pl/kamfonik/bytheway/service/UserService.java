@@ -2,8 +2,10 @@ package pl.kamfonik.bytheway.service;
 
 import pl.kamfonik.bytheway.entity.User;
 
+import java.util.Optional;
+
 public interface UserService {
-    User findByUsername(String name);
+    Optional<User> findByUsername(String name);
     boolean saveUser(User user);
     void updateUser(User user);
 }
