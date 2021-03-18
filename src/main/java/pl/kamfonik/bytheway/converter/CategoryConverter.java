@@ -1,17 +1,20 @@
 package pl.kamfonik.bytheway.converter;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 import pl.kamfonik.bytheway.entity.Category;
 import pl.kamfonik.bytheway.service.CategoryService;
 
-
+@Component
+@RequiredArgsConstructor
 public class CategoryConverter implements Converter<String, Category> {
-    @Autowired
-    private CategoryService categoryService;
+
+    private final CategoryService categoryService;
 
     @Override
-    public Category convert(String source) {
-        return categoryService.findById(Long.parseLong(source));
+    public Category convert(@NonNull String s) {
+        return categoryService.findById(Long.parseLong(s));
     }
 }

@@ -1,16 +1,20 @@
 package pl.kamfonik.bytheway.converter;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.service.PlaceService;
 
+@Component
+@RequiredArgsConstructor
 public class PlaceConverter  implements Converter <String, Place>{
-    @Autowired
-    private PlaceService placeService;
+
+    private final PlaceService placeService;
 
     @Override
-    public Place convert(String s) {
+    public Place convert(@NonNull String s) {
         return placeService.findPlaceById(s);
     }
 }

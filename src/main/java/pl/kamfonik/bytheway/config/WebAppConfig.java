@@ -6,8 +6,6 @@ import org.springframework.web.servlet.LocaleContextResolver;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import pl.kamfonik.bytheway.converter.CategoryConverter;
-import pl.kamfonik.bytheway.converter.PlaceConverter;
 
 import java.util.Locale;
 
@@ -20,16 +18,7 @@ public class WebAppConfig implements WebMvcConfigurer {
         registry.addViewController("/").setViewName("home");
     }
 
-    @Bean
-    public CategoryConverter getCategoryConverter(){
-        return new CategoryConverter();
-    }
-    @Bean
-    public PlaceConverter getPlaceConverter(){
-        return new PlaceConverter();
-    }
-
-    @Bean(name="localeResolver")
+    @Bean(name = "localeResolver")
     public LocaleContextResolver getLocaleContextResolver() {
         SessionLocaleResolver localeResolver = new SessionLocaleResolver();
         localeResolver.setDefaultLocale(Locale.US);

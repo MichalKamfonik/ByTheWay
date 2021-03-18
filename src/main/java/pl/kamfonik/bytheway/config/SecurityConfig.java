@@ -10,7 +10,6 @@ import pl.kamfonik.bytheway.service.SpringDataUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
