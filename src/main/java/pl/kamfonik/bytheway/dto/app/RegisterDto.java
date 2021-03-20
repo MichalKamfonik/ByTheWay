@@ -14,7 +14,7 @@ import javax.validation.constraints.Pattern;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class RegisterDto {
     @NotBlank
     @Length(min = 3, max = 20)
     @Pattern(regexp = "[._]?(([a-zA-Z][a-zA-Z0-9]*)|([a-zA-Z0-9]*[a-zA-Z]))([._]?[a-zA-Z0-9])*",

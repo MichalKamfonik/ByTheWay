@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
-import pl.kamfonik.bytheway.dto.app.UserDto;
 import pl.kamfonik.bytheway.entity.User;
-import pl.kamfonik.bytheway.exception.RegistrationDisabledException;
 import pl.kamfonik.bytheway.repository.UserRepository;
 import pl.kamfonik.bytheway.service.interfaces.UserService;
 
@@ -25,9 +23,9 @@ public class UserServiceDisabled implements UserService {
     }
 
     @Override
-    public void registerUser(UserDto userDto) throws RegistrationDisabledException{
+    public boolean registerUser(User user){
         log.info("User registration is disabled.");
-        throw new RegistrationDisabledException();
+        return false;
     }
 
     @Override
