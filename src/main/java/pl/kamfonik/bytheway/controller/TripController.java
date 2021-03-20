@@ -64,7 +64,6 @@ public class TripController {
             Route route = routeService.getRoute(
                     trip.getActivities().stream()
                             .map(Activity::getPlace)
-                            .map(placeEntity2DtoConverter::convert)
                             .collect(Collectors.toList())
             );
 
