@@ -15,6 +15,8 @@ import pl.kamfonik.bytheway.dto.poi.*;
 import pl.kamfonik.bytheway.entity.Category;
 import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.repository.PlaceRepository;
+import pl.kamfonik.bytheway.service.interfaces.CategoryService;
+import pl.kamfonik.bytheway.service.interfaces.PlaceService;
 
 import java.util.List;
 import java.util.Objects;

@@ -11,6 +11,7 @@ import pl.kamfonik.bytheway.exception.RepeatedPasswordException;
 import pl.kamfonik.bytheway.exception.UserNameTakenException;
 import pl.kamfonik.bytheway.repository.RoleRepository;
 import pl.kamfonik.bytheway.repository.UserRepository;
+import pl.kamfonik.bytheway.service.interfaces.UserService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "bytheway", name = "registration", havingValue = "enabled")
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;

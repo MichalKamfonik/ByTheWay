@@ -2,7 +2,7 @@ package pl.kamfonik.bytheway.validator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import pl.kamfonik.bytheway.service.TripService;
+import pl.kamfonik.bytheway.service.interfaces.TripService;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

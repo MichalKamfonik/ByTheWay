@@ -5,7 +5,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import pl.kamfonik.bytheway.entity.Category;
-import pl.kamfonik.bytheway.service.CategoryService;
+import pl.kamfonik.bytheway.service.interfaces.CategoryService;
 
 @Component
 @RequiredArgsConstructor

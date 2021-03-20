@@ -5,7 +5,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import pl.kamfonik.bytheway.entity.Place;
-import pl.kamfonik.bytheway.service.PlaceService;
+import pl.kamfonik.bytheway.service.interfaces.PlaceService;
 
 @Component
 @RequiredArgsConstructor

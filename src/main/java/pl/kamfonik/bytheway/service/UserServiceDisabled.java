@@ -8,6 +8,7 @@ import pl.kamfonik.bytheway.dto.app.UserDto;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.exception.RegistrationDisabledException;
 import pl.kamfonik.bytheway.repository.UserRepository;
+import pl.kamfonik.bytheway.service.interfaces.UserService;
 
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ import java.util.Optional;
 @ConditionalOnProperty(prefix = "bytheway", name = "registration", havingValue = "disabled")
 @Slf4j
 @Service
-public class UserServiceDisabled implements UserService{
+public class UserServiceDisabled implements UserService {
     private final UserRepository userRepository;
 
     @Override

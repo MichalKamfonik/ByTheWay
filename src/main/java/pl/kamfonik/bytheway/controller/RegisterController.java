@@ -13,7 +13,7 @@ import pl.kamfonik.bytheway.dto.app.UserDto;
 import pl.kamfonik.bytheway.exception.RegistrationDisabledException;
 import pl.kamfonik.bytheway.exception.RepeatedPasswordException;
 import pl.kamfonik.bytheway.exception.UserNameTakenException;
-import pl.kamfonik.bytheway.service.UserService;
+import pl.kamfonik.bytheway.service.interfaces.UserService;
 
 import javax.validation.Valid;
 

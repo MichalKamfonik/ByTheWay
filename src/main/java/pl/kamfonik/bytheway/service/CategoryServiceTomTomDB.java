@@ -10,6 +10,7 @@ import pl.kamfonik.bytheway.ByTheWayProperties;
 import pl.kamfonik.bytheway.dto.category.CategoriesTableDto;
 import pl.kamfonik.bytheway.entity.Category;
 import pl.kamfonik.bytheway.repository.CategoryRepository;
+import pl.kamfonik.bytheway.service.interfaces.CategoryService;
 
 import javax.transaction.Transactional;
 import java.util.Collection;

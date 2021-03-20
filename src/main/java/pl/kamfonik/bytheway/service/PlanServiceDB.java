@@ -6,12 +6,13 @@ import pl.kamfonik.bytheway.entity.Plan;
 import pl.kamfonik.bytheway.entity.Trip;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.repository.PlanRepository;
+import pl.kamfonik.bytheway.service.interfaces.PlanService;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class PlanServiceDB implements PlanService{
+public class PlanServiceDB implements PlanService {
     private final PlanRepository planRepository;
 
     public List<Plan> findUserPlans(User user){

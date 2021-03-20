@@ -15,7 +15,7 @@ import pl.kamfonik.bytheway.dto.Route;
 import pl.kamfonik.bytheway.dto.rest.PlaceDto;
 import pl.kamfonik.bytheway.entity.*;
 import pl.kamfonik.bytheway.security.CurrentUser;
-import pl.kamfonik.bytheway.service.*;
+import pl.kamfonik.bytheway.service.interfaces.*;
 import pl.kamfonik.bytheway.validator.UserFormValidation;
 
 import javax.validation.groups.Default;

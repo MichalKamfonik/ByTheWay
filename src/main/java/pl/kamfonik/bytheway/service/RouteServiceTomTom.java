@@ -11,6 +11,7 @@ import pl.kamfonik.bytheway.dto.Route;
 import pl.kamfonik.bytheway.dto.rest.PlaceDto;
 import pl.kamfonik.bytheway.dto.route.RouteDto;
 import pl.kamfonik.bytheway.dto.route.RoutesTableDto;
+import pl.kamfonik.bytheway.service.interfaces.RouteService;
 
 import java.util.List;
 import java.util.Objects;

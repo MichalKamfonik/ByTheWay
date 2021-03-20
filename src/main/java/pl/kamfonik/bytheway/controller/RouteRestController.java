@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.kamfonik.bytheway.dto.RouteObjectForMapping;
 import pl.kamfonik.bytheway.dto.rest.PlaceDto;
-import pl.kamfonik.bytheway.service.RouteService;
+import pl.kamfonik.bytheway.service.interfaces.RouteService;
 
 import java.util.List;
 

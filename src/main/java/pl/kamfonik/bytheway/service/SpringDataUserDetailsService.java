@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.security.CurrentUser;
+import pl.kamfonik.bytheway.service.interfaces.UserService;
 
 import java.util.HashSet;
 import java.util.Set;

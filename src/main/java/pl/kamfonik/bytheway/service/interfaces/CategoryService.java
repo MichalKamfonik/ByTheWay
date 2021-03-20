@@ -1,4 +1,4 @@
-package pl.kamfonik.bytheway.service;
+package pl.kamfonik.bytheway.service.interfaces;
 
 import pl.kamfonik.bytheway.entity.Category;
 

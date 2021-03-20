@@ -6,6 +6,8 @@ import pl.kamfonik.bytheway.entity.Activity;
 import pl.kamfonik.bytheway.entity.Trip;
 import pl.kamfonik.bytheway.entity.User;
 import pl.kamfonik.bytheway.repository.TripRepository;
+import pl.kamfonik.bytheway.service.interfaces.PlaceService;
+import pl.kamfonik.bytheway.service.interfaces.TripService;
 
 import java.util.List;
 
