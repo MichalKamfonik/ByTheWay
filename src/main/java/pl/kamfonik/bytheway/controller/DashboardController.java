@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pl.kamfonik.bytheway.entity.Plan;
 import pl.kamfonik.bytheway.entity.User;
-import pl.kamfonik.bytheway.security.CurrentUser;
+import pl.kamfonik.bytheway.entity.CurrentUser;
 import pl.kamfonik.bytheway.service.interfaces.PlanService;
 import pl.kamfonik.bytheway.service.interfaces.TripService;
 

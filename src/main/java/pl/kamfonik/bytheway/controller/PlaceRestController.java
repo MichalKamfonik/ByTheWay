@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.kamfonik.bytheway.converter.Entity2DtoConverter;
 import pl.kamfonik.bytheway.dto.rest.PlaceDto;
 import pl.kamfonik.bytheway.entity.Place;
-import pl.kamfonik.bytheway.security.CurrentUser;
+import pl.kamfonik.bytheway.entity.CurrentUser;
 import pl.kamfonik.bytheway.service.interfaces.PlaceService;
 
 import java.util.List;
