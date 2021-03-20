@@ -51,9 +51,9 @@
                             <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                     <form:password class="form-control form-control-user"
-                                           id="exampleInputPassword" placeholder="Password" path="initialPassword"/>
+                                           id="exampleInputPassword" placeholder="Password" path="password"/>
                                     <div class="text-center">
-                                        <form:errors path="initialPassword" cssClass="lead text-danger mb-5" element="small" />
+                                        <form:errors path="password" cssClass="lead text-danger mb-5" element="small" />
                                     </div>
                                 </div>
                                 <div class="col-sm-6">

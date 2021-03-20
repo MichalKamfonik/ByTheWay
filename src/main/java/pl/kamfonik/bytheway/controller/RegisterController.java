@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import pl.kamfonik.bytheway.entity.User;
+import pl.kamfonik.bytheway.dto.app.UserDto;
+import pl.kamfonik.bytheway.exception.RegistrationDisabledException;
+import pl.kamfonik.bytheway.exception.RepeatedPasswordException;
+import pl.kamfonik.bytheway.exception.UserNameTakenException;
 import pl.kamfonik.bytheway.service.UserService;
 
 import javax.validation.Valid;
@@ -22,46 +25,34 @@ public class RegisterController {
 
     @GetMapping
     public String registerForm(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("user", new UserDto());
         return "login/register";
     }
 
     @PostMapping
-    public String registerUser(@ModelAttribute @Valid User user, BindingResult result) {
-        if (!passwordsMatch(user)) {
-            result.addError(
-                    new FieldError(
-                            "user",
-                            "repeatedPassword",
-                            "Repeated password must be the same as password"
-                    )
-            );
-        }
-        if (userExists(user)) {
-            result.addError(
-                    new FieldError(
+    public String registerUser(@ModelAttribute(name = "user") @Valid UserDto userDto, BindingResult result) {
+        try {
+            if(!result.hasErrors()){
+                userService.registerUser(userDto);
+                return "login/registrySuccess";
+            }
+        } catch (UserNameTakenException e) {
+            result.addError(new FieldError(
                             "user",
                             "username",
                             "Username already taken. Choose other name"
                     )
             );
-        }
-        if(result.hasErrors()){
-            return "login/register";
-        }
-
-        if (userService.saveUser(user)) {
-            return "login/registrySuccess";
-        } else {
+        } catch (RepeatedPasswordException e) {
+            result.addError(new FieldError(
+                            "user",
+                            "repeatedPassword",
+                            "Repeated password must be the same as password"
+                    )
+            );
+        } catch (RegistrationDisabledException e) {
             return "login/registryFail";
         }
-    }
-
-    private boolean userExists(User user) {
-        return userService.findByUsername(user.getUsername()).isPresent();
-    }
-
-    private boolean passwordsMatch(User user) {
-        return user.getInitialPassword().equals(user.getRepeatedPassword());
+        return "login/register";
     }
 }
