@@ -21,6 +21,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryServiceTomTomDB implements CategoryService {
+    private static long MAIN_CATEGORIES_UPPER_BOUNDARY = 9999L;
 
     private final CategoryRepository categoryRepository;
     private final ByTheWayProperties byTheWayProperties;
@@ -40,7 +41,7 @@ public class CategoryServiceTomTomDB implements CategoryService {
                 TOMTOM_CATEGORIES_API_URL + byTheWayProperties.getCategory().getApikey(),
                 CategoriesTableDto.class);
         Objects.requireNonNull(forEntity.getBody()).getCategories().stream()
-                .filter(categoryDto -> categoryDto.getId()<9999L /*only main categories*/)
+                .filter(categoryDto -> categoryDto.getId()< MAIN_CATEGORIES_UPPER_BOUNDARY /*only main categories*/)
                 .map(categoryDto -> {
                     Category category = new Category();
                     category.setId(categoryDto.getId());
