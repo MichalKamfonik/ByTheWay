@@ -41,7 +41,7 @@ public class PlanController {
             model.addAttribute("categories", user.getFavoriteCategories());
             return "app/dashboard";
         }
-        plan.setEndTime(plan.getStartTime().plusDays(plan.getTrip().getDuration()));
+        plan.setEndTime(plan.getStartTime().plusDays(plan.getTrip().getDuration()-1));
         plan.setUser(currentUser.getUser());
         planService.save(plan);
 
