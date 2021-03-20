@@ -67,7 +67,7 @@
                         <script>
                             const userPlans = ${plans.stream().map(p->p.json()).toList()};
                         </script>
-                        <form:form modelAttribute="plan" method="post" action="/app/add-plan">
+                        <form:form modelAttribute="plan" method="post" action="/app/plan/add">
                             <form:errors cssClass="lead text-danger mb-5"/>
                         <div style="display: none" id="planForm">
                                 <form:select path="trip" items="${trips}" itemLabel="name" itemValue="id" cssClass="nav-item dropdown"/>

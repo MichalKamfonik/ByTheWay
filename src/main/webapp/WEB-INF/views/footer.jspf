@@ -100,7 +100,7 @@
     }
     function updateDeletePlan(id,name,from,to){
         document.querySelector("#deletePlanName").innerText = name + " at " + from + " to " + to;
-        document.querySelector("#deletePlanForm").action = "<c:url value="/app/delete/plan/"/>"+id;
+        document.querySelector("#deletePlanForm").action = "<c:url value="/app/plan/delete/"/>"+id;
     }
 </script>
 
