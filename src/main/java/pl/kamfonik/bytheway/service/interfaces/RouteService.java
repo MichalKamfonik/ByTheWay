@@ -4,8 +4,10 @@ import pl.kamfonik.bytheway.dto.Route;
 import pl.kamfonik.bytheway.entity.Place;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RouteService {
-    Route getRoute(Place origin, Place destination);
-    Route getRoute(List<Place> places);
+    Optional<Route> getRoute(Place origin, Place destination);
+
+    Optional<Route> getRoute(List<Place> places);
 }

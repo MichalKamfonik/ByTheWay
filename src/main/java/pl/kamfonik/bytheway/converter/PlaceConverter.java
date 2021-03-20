@@ -15,6 +15,6 @@ public class PlaceConverter  implements Converter <String, Place>{
 
     @Override
     public Place convert(@NonNull String s) {
-        return placeService.findPlaceById(s);
+        return placeService.findPlaceById(s).orElseThrow();
     }
 }

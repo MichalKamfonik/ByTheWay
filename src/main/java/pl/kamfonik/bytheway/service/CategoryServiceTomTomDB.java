@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Setter
@@ -53,8 +54,8 @@ public class CategoryServiceTomTomDB implements CategoryService {
     }
 
     @Override
-    public Category findById(Long id) {
-        return categoryRepository.findById(id).orElseThrow();
+    public Optional<Category> findById(Long id) {
+        return categoryRepository.findById(id);
     }
 
     @Override

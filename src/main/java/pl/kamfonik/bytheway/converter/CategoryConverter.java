@@ -15,6 +15,6 @@ public class CategoryConverter implements Converter<String, Category> {
 
     @Override
     public Category convert(@NonNull String s) {
-        return categoryService.findById(Long.parseLong(s));
+        return categoryService.findById(Long.parseLong(s)).orElseThrow();
     }
 }

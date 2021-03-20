@@ -20,6 +20,6 @@ public class CategoryIDValidator implements ConstraintValidator<CategoryID, Long
         if (value == null) {
             return true;
         }
-        return categoryService.findById(value) != null;
+        return categoryService.findById(value).isPresent();
     }
 }

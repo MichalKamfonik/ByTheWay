@@ -5,12 +5,14 @@ import pl.kamfonik.bytheway.entity.Trip;
 import pl.kamfonik.bytheway.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PlanService {
     List<Plan> findUserPlans(User user);
-    Plan save(Plan plan);
 
-    Plan findPlanById(Long id);
+    Optional<Plan> save(Plan plan);
+
+    Optional<Plan> findPlanById(Long id);
 
     Boolean checkUserPlan(Long id, User user);
 

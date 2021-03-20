@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import pl.kamfonik.bytheway.ByTheWayProperties;
 import pl.kamfonik.bytheway.dto.poi.*;
@@ -55,36 +56,41 @@ public class PlaceServiceTomTomDB implements PlaceService {
                     "&key=";
 
     @Override
-    public Place findPlaceById(String id) {
+    public Optional<Place> findPlaceById(String id) {
 
         Optional<Place> byId = placeRepository.findById(id);
         if (byId.isPresent()) {
-            return byId.get();
+            return byId;
         }
 
         String url = TOMTOM_GET_POI_BY_ID_API_URL.replace("__ID__", id)
                 + byTheWayProperties.getSearchPOI().getApikey();
 
-        ResponseEntity<SearchResultTableDto> forEntity = tryGetForEntity(url);
-
-        return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
-                .map(this::searchResultsToPlaces)
-                .collect(Collectors.toList()).get(0);
+        try{
+            ResponseEntity<SearchResultTableDto> forEntity = tryGetForEntity(url);
+            return Optional.of(forEntity.getBody().getResults().stream()
+                    .map(this::searchResultsToPlaces)
+                    .collect(Collectors.toList()).get(0));
+        } catch (RestClientException e){
+            return Optional.empty();
+        }
     }
 
     @Override
-    public Place findPlaceByQuery(String query) {
+    public Optional<Place> findPlaceByQuery(String query) {
         String url = TOMTOM_SEARCH_POI_API_URL.replace("__QUERY__", query)
                 + byTheWayProperties.getSearchPOI().getApikey();
 
-
-        ResponseEntity<SearchResultTableDto> forEntity = tryGetForEntity(url);
-
-        return Objects.requireNonNull(forEntity.getBody()).getResults().stream()
-                .map(SearchResultDto::getId)
-                .map(this::findPlaceById)
-                .collect(Collectors.toList())
-                .get(0);
+        try{
+            ResponseEntity<SearchResultTableDto> forEntity = tryGetForEntity(url);
+            return forEntity.getBody().getResults().stream()
+                    .map(SearchResultDto::getId)
+                    .map(this::findPlaceById)
+                    .collect(Collectors.toList())
+                    .get(0);
+        } catch (RestClientException e){
+            return Optional.empty();
+        }
     }
 
     private ResponseEntity<SearchResultTableDto> tryGetForEntity(String url) {
@@ -133,8 +139,12 @@ public class PlaceServiceTomTomDB implements PlaceService {
     }
 
     @Override
-    public Place save(Place place) {
-        return placeRepository.save(place);
+    public Optional<Place> save(Place place) {
+        try{
+            return Optional.of(placeRepository.save(place));
+        } catch (IllegalArgumentException e){
+            return Optional.empty();
+        }
     }
 
     @Override

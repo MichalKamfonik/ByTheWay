@@ -31,7 +31,6 @@ public class TripController {
     private final TripService tripService;
     private final PlanService planService;
     private final RouteService routeService;
-    private final Entity2DtoConverter<Place, PlaceDto> placeEntity2DtoConverter;
     private final ByTheWayProperties byTheWayProperties;
 
     @PostMapping("/delete/{id}")
@@ -40,7 +39,7 @@ public class TripController {
                              @PathVariable Long id) {
         User user = currentUser.getUser();
         if (tripService.checkUserTrip(id, user)) {
-            Trip trip = tripService.findTripById(id);
+            Trip trip = tripService.findTripById(id).orElseThrow();
             List<Plan> plans = planService.findPlansByTrip(trip);
             if (plans.isEmpty()) {
                 tripService.delete(id);
@@ -60,12 +59,12 @@ public class TripController {
                            @PathVariable Long id) {
         User user = currentUser.getUser();
         if (tripService.checkUserTrip(id, user)) {
-            Trip trip = tripService.findTripById(id);
+            Trip trip = tripService.findTripById(id).orElseThrow();
             Route route = routeService.getRoute(
                     trip.getActivities().stream()
                             .map(Activity::getPlace)
                             .collect(Collectors.toList())
-            );
+            ).orElseThrow();
 
             model.addAttribute("trip", trip);
             model.addAttribute("mappingApiKey", byTheWayProperties.getMapping().getApikey());

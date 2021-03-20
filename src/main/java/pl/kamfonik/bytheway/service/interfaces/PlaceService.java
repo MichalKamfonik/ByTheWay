@@ -4,12 +4,17 @@ import pl.kamfonik.bytheway.entity.Category;
 import pl.kamfonik.bytheway.entity.Place;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PlaceService {
-    Place findPlaceByQuery(String query);
-    Place findPlaceById(String id);
+    Optional<Place> findPlaceByQuery(String query);
+
+    Optional<Place> findPlaceById(String id);
+
     List<Place> findAlongRoute(Place origin, Place destination, Integer travelTime, List<Category> categories);
-    Place save(Place place);
+
+    Optional<Place> save(Place place);
+
     List<Place> saveAll(List<Place> places);
 
     void clear();

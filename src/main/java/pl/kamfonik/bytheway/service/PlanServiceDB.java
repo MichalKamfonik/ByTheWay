@@ -9,6 +9,7 @@ import pl.kamfonik.bytheway.repository.PlanRepository;
 import pl.kamfonik.bytheway.service.interfaces.PlanService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -23,18 +24,26 @@ public class PlanServiceDB implements PlanService {
         return planRepository.findAll();
     }
 
-    public Plan save(Plan plan){
-        return planRepository.save(plan);
+    public Optional<Plan> save(Plan plan){
+        try {
+            return Optional.of(planRepository.save(plan));
+        } catch (IllegalArgumentException e){
+            return Optional.empty();
+        }
     }
 
     @Override
-    public Plan findPlanById(Long id) {
-        return planRepository.findById(id).orElseThrow();
+    public Optional<Plan> findPlanById(Long id) {
+        return planRepository.findById(id);
     }
 
     @Override
     public Boolean checkUserPlan(Long id, User user) {
-        return findPlanById(id).getUser().getId().equals(user.getId());
+        return findPlanById(id)
+                .map(Plan::getUser)
+                .map(User::getId)
+                .map(userId->userId.equals(user.getId()))
+                .orElse(false);
     }
 
     @Override

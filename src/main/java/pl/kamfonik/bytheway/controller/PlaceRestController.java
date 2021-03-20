@@ -23,7 +23,7 @@ public class PlaceRestController {
 
     @PostMapping("/find")
     public PlaceDto findPlace(@RequestParam String query) {
-        Place placeByQuery = placeService.findPlaceByQuery(query);
+        Place placeByQuery = placeService.findPlaceByQuery(query).orElseThrow();
         return placeEntity2DtoConverter.convert(placeByQuery);
     }
 
@@ -34,8 +34,8 @@ public class PlaceRestController {
             @AuthenticationPrincipal CurrentUser currentUser) {
 
         List<Place> alongRoute = placeService.findAlongRoute(
-                placeService.findPlaceById(places.get(0).getId()),
-                placeService.findPlaceById(places.get(1).getId()),
+                placeService.findPlaceById(places.get(0).getId()).orElseThrow(),
+                placeService.findPlaceById(places.get(1).getId()).orElseThrow(),
                 travelTime,
                 currentUser.getUser().getFavoriteCategories());
 

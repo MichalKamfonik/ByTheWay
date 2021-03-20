@@ -10,6 +10,7 @@ import pl.kamfonik.bytheway.service.interfaces.PlaceService;
 import pl.kamfonik.bytheway.service.interfaces.TripService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,16 +19,20 @@ public class TripServiceDB implements TripService {
     private final PlaceService placeService;
 
     @Override
-    public Trip save(Trip trip) {
+    public Optional<Trip> save(Trip trip) {
         trip.getActivities().stream()
                 .map(Activity::getPlace)
                 .forEach(placeService::save);
-        return tripRepository.save(trip);
+        try {
+            return Optional.of(tripRepository.save(trip));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public Trip findTripById(Long id) {
-        return tripRepository.findById(id).orElseThrow();
+    public Optional<Trip> findTripById(Long id) {
+        return tripRepository.findById(id);
     }
 
     @Override
@@ -37,7 +42,11 @@ public class TripServiceDB implements TripService {
 
     @Override
     public Boolean checkUserTrip(Long id, User user) {
-        return findTripById(id).getUser().getId().equals(user.getId());
+        return findTripById(id)
+                .map(Trip::getUser)
+                .map(User::getId)
+                .map(userId -> userId.equals(user.getId()))
+                .orElse(false);
     }
 
     @Override
