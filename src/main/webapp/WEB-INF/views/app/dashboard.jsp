@@ -23,15 +23,15 @@
             <h1 class="h3 mb-0 text-gray-800">ByTheWay</h1>
         </div>
         <div class="row">
-            <a href="<c:url value="/app/add-trip"/>" class="d-none d-inline-block btn btn-primary shadow">
+            <a href="<c:url value="/app/trip/add"/>" class="d-none d-inline-block btn btn-primary shadow">
                 <i class="fas fa-map-signs text-white-50"></i> Create new trip </a>
             <a href="<c:url value="/app/categories"/>" class="d-none d-inline-block btn btn-primary shadow">
                 <i class="far fa-star text-white-50"></i> Manage categories </a>
             <sec:authorize access="hasRole('ADMIN')">
-                <a href="<c:url value="/app/initialize"/>"
+                <a href="<c:url value="/admin/initialize-categories"/>"
                    class="d-none d-inline-block btn btn-primary shadow">
                     <i class="fas fa-star text-white-50"></i> Initialize Categories </a>
-                <a href="<c:url value="/app/clear-places"/>"
+                <a href="<c:url value="/admin/clear-places"/>"
                    class="d-none d-inline-block btn btn-primary shadow">
                     <i class="fas fa-broom text-white-50"></i> Clear places </a>
             </sec:authorize>
@@ -175,7 +175,7 @@
                                         <td>${index.count}</td>
                                         <td>${trip.name}</td>
                                         <td>
-                                            <a href="<c:url value="/app/show/trip/${trip.id}"/>"
+                                            <a href="<c:url value="/app/trip/show/${trip.id}"/>"
                                                class="btn btn-info btn-icon-split btn-sm">
                                         <span class="icon text-white-50">
                                             <i class="fas fa-info-circle fa-sm"></i>

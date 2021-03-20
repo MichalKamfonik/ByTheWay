@@ -96,7 +96,7 @@
 <script type="text/javascript">
     function updateDeleteTrip(id,name){
         document.querySelector("#deleteTripName").innerText = name;
-        document.querySelector("#deleteTripForm").action = "<c:url value="/app/delete/trip/"/>"+id;
+        document.querySelector("#deleteTripForm").action = "<c:url value="/app/trip/delete/"/>"+id;
     }
     function updateDeletePlan(id,name,from,to){
         document.querySelector("#deletePlanName").innerText = name + " at " + from + " to " + to;
