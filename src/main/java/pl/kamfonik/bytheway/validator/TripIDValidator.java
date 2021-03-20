@@ -22,6 +22,6 @@ public class TripIDValidator implements ConstraintValidator<TripID, Long> {
         if (value == null) {
             return true;
         }
-        return tripService.findTripById(value) != null;
+        return tripService.findTripById(value).isPresent();
     }
 }

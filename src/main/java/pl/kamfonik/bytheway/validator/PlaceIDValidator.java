@@ -20,6 +20,6 @@ public class PlaceIDValidator implements ConstraintValidator<PlaceID, String> {
         if (value == null) {
             return true;
         }
-        return placeService.findPlaceById(value) != null;
+        return placeService.findPlaceById(value).isPresent();
     }
 }
