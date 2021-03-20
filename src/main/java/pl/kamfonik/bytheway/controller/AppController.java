@@ -10,16 +10,17 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.kamfonik.bytheway.ByTheWayProperties;
+import pl.kamfonik.bytheway.converter.Entity2DtoConverter;
 import pl.kamfonik.bytheway.dto.Route;
-import pl.kamfonik.bytheway.entity.Plan;
-import pl.kamfonik.bytheway.entity.Trip;
-import pl.kamfonik.bytheway.entity.User;
+import pl.kamfonik.bytheway.dto.rest.PlaceDto;
+import pl.kamfonik.bytheway.entity.*;
 import pl.kamfonik.bytheway.security.CurrentUser;
 import pl.kamfonik.bytheway.service.*;
 import pl.kamfonik.bytheway.validator.UserFormValidation;
 
 import javax.validation.groups.Default;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -33,6 +34,7 @@ public class AppController {
     private final TripService tripService;
     private final ByTheWayProperties byTheWayProperties;
     private final RouteService routeService;
+    private final Entity2DtoConverter<Place, PlaceDto> placeEntity2DtoConverter;
 
     @GetMapping("/initialize")
     public String initializeCategories(@AuthenticationPrincipal CurrentUser user) {
@@ -92,9 +94,9 @@ public class AppController {
             BindingResult result,
             @AuthenticationPrincipal CurrentUser currentUser,
             Model model) {
-        if(result.hasErrors()){
-            result.getAllErrors().forEach(e->log.debug(e.toString()));
-            result.addError(new ObjectError("plan","Incorrect data, please try again"));
+        if (result.hasErrors()) {
+            result.getAllErrors().forEach(e -> log.debug(e.toString()));
+            result.addError(new ObjectError("plan", "Incorrect data, please try again"));
             User user = currentUser.getUser();
             model.addAttribute("plans", planService.findUserPlans(user));
             model.addAttribute("trips", tripService.findUserTrips(user));
@@ -147,7 +149,12 @@ public class AppController {
         User user = currentUser.getUser();
         if (user.isAdmin() || tripService.checkUserTrip(id, user)) {
             Trip trip = tripService.findTripById(id);
-            Route route = routeService.getRoute(trip);
+            Route route = routeService.getRoute(
+                    trip.getActivities().stream()
+                            .map(Activity::getPlace)
+                            .map(placeEntity2DtoConverter::convert)
+                            .collect(Collectors.toList())
+            );
 
             model.addAttribute("trip", trip);
             model.addAttribute("mappingApiKey", byTheWayProperties.getMapping().getApikey());
@@ -173,7 +180,7 @@ public class AppController {
             @AuthenticationPrincipal CurrentUser currentUser,
             Model model) {
         if (result.hasErrors()) {
-            result.addError(new ObjectError("trip","Incorrect data, please try again"));
+            result.addError(new ObjectError("trip", "Incorrect data, please try again"));
             model.addAttribute("mappingApiKey", byTheWayProperties.getMapping().getApikey());
             return "app/tripForm";
         }

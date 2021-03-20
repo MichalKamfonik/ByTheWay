@@ -491,7 +491,7 @@ function apiGetMapData() {
                 'Content-Type': 'application/json',
                 "X-CSRF-Token": CSRF_TOKEN
             },
-            body: JSON.stringify(ACTIVITIES),
+            body: JSON.stringify(ACTIVITIES.map(a=>a.place)),
             method: 'POST'
         }
     ).then(resp => {

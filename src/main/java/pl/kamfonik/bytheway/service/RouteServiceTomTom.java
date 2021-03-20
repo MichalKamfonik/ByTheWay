@@ -8,12 +8,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import pl.kamfonik.bytheway.ByTheWayProperties;
 import pl.kamfonik.bytheway.dto.Route;
+import pl.kamfonik.bytheway.dto.rest.PlaceDto;
 import pl.kamfonik.bytheway.dto.route.RouteDto;
 import pl.kamfonik.bytheway.dto.route.RoutesTableDto;
-import pl.kamfonik.bytheway.entity.Activity;
-import pl.kamfonik.bytheway.entity.Place;
-import pl.kamfonik.bytheway.entity.Trip;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -27,7 +26,7 @@ public class RouteServiceTomTom implements RouteService {
             "https://api.tomtom.com/routing/1/calculateRoute/__LOCATIONS__/json?key=";
 
     @Override
-    public Route getRoute(Place origin, Place destination) {
+    public Route getRoute(PlaceDto origin, PlaceDto destination) {
         String locations =
                 origin.getLat() + "," + origin.getLon() + ":" +
                         destination.getLat() + "," + destination.getLon();
@@ -39,9 +38,8 @@ public class RouteServiceTomTom implements RouteService {
     }
 
     @Override
-    public Route getRoute(Trip trip) {
-        String locations = trip.getActivities().stream()
-                .map(Activity::getPlace)
+    public Route getRoute(List<PlaceDto> places) {
+        String locations = places.stream()
                 .map(p->p.getLat() + "," + p.getLon())
                 .collect(Collectors.joining(":"));
 
