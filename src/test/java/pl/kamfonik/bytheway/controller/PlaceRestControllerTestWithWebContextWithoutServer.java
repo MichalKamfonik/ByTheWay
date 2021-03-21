@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.kamfonik.bytheway.converter.Entity2DtoConverter;
@@ -41,6 +42,7 @@ class PlaceRestControllerTestWithWebContextWithoutServer {
     @MockBean
     private SpringDataUserDetailsService springDataUserDetailsService;
 
+    @WithMockUser
     @Test
     public void shouldFindPartynice() throws Exception {
         Place place = new Place();
