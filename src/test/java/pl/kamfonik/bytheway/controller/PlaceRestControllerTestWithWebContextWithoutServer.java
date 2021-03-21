@@ -21,8 +21,7 @@ import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PlaceRestController.class)
 @TestPropertySource(locations = "classpath:application-tests.properties")
@@ -60,6 +59,6 @@ class PlaceRestControllerTestWithWebContextWithoutServer {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsStringIgnoringCase("partynice")));
+                .andExpect(jsonPath("$.name", containsStringIgnoringCase("partynice")));
     }
 }

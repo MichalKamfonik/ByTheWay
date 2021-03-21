@@ -11,8 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -32,6 +31,6 @@ class PlaceRestControllerTestWithFullContextWithoutServer {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsStringIgnoringCase("partynice")));
+                .andExpect(jsonPath("$.name", containsStringIgnoringCase("partynice")));
     }
 }
