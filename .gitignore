@@ -33,3 +33,4 @@ build/
 .vscode/
 /src/main/webapp/WEB-INF/views/old/
 /.gradle/
+/src/main/resources/application-tests.properties
