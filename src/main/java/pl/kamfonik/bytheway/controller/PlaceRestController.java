@@ -2,15 +2,17 @@ package pl.kamfonik.bytheway.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import pl.kamfonik.bytheway.converter.Entity2DtoConverter;
 import pl.kamfonik.bytheway.dto.rest.PlaceDto;
-import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.entity.CurrentUser;
+import pl.kamfonik.bytheway.entity.Place;
 import pl.kamfonik.bytheway.service.interfaces.PlaceService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -22,9 +24,12 @@ public class PlaceRestController {
     private final Entity2DtoConverter<List<Place>, List<PlaceDto>> placeListEntity2DtoConverter;
 
     @PostMapping("/find")
-    public PlaceDto findPlace(@RequestParam String query) {
-        Place placeByQuery = placeService.findPlaceByQuery(query).orElseThrow();
-        return placeEntity2DtoConverter.convert(placeByQuery);
+    public ResponseEntity<PlaceDto> findPlace(@RequestParam String query) {
+        Optional<Place> placeByQuery = placeService.findPlaceByQuery(query);
+        return placeByQuery
+                .map(placeEntity2DtoConverter::convert)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/find-along-route/{travelTime}")
