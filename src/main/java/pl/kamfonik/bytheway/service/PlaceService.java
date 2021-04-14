@@ -12,4 +12,6 @@ public interface PlaceService {
     List<Place> findAlongRoute(Place origin, Place destination, Integer travelTime, Set<Category> categories);
     Place save(Place place);
     List<Place> saveAll(List<Place> places);
+
+    void clear();
 }

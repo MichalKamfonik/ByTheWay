@@ -24,4 +24,7 @@ public class User {
     @JoinTable(name = "user_category", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> favoriteCategories;
+    public boolean isAdmin(){
+        return roles.stream().anyMatch(r -> "ROLE_ADMIN".equals(r.getName()));
+    }
 }

@@ -27,4 +27,14 @@ public class TripServiceDB implements TripService{
     public List<Trip> findUserTrips(User user) {
         return tripRepository.findByUser(user);
     }
+
+    @Override
+    public Boolean checkUserTrip(Long id, User user) {
+        return findTripById(id).getUser().equals(user);
+    }
+
+    @Override
+    public void delete(Long id) {
+        tripRepository.deleteById(id);
+    }
 }

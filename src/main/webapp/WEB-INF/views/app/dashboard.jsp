@@ -21,12 +21,16 @@
                 <td>${plan.trip.name}</td>
                 <td>${plan.startTime}</td>
                 <td>${plan.endTime}</td>
-                <td><form action="<c:url value="/app/delete/plan/${plan.id}"/>" method="post">
+                <td><form action="<c:url value="/app/delete/plan/${plan.id}"/>" method="get">
                     <input type="submit" value="Delete">
                 </form></td>
             </tr>
         </c:forEach>
     </table>
+    <h2></h2>
+    <form method="get" action="<c:url value="/app/add-plan"/>">
+        <div><input type="submit" value="Add plan"></div>
+    </form>
 </div>
 <div><h2>Your trips</h2>
     <table border="1">
@@ -39,12 +43,16 @@
             <tr>
                 <td>${index.count}</td>
                 <td>${trip.name}</td>
-                <td><form action="<c:url value="/app/delete/trip/${trip.id}"/>" method="post">
+                <td><form action="<c:url value="/app/delete/trip/${trip.id}"/>" method="get">
                     <input type="submit" value="Delete">
                 </form></td>
             </tr>
         </c:forEach>
     </table>
+    <h2></h2>
+    <form method="get" action="<c:url value="/app/add-trip1"/>">
+        <div><input type="submit" value="Add trip"></div>
+    </form>
 </div>
 <div><h2>Your chosen categories</h2>
     <table border="1">
@@ -67,19 +75,16 @@
         </tr>
     </table>
 </div>
-<h2></h2>
-<form method="get" action="<c:url value="/app/add-plan"/>">
-    <div><input type="submit" value="Add plan"></div>
-</form>
-<h2></h2>
-<form method="get" action="<c:url value="/app/add-trip1"/>">
-    <div><input type="submit" value="Add trip"></div>
-</form>
 <%@include file="../login/loggedAs.jspf" %>
 
 <sec:authorize access="hasRole('ADMIN')">
     <form action="<c:url value="/app/initialize"/>" method="get">
-        <input class="fa fa-id-badge" type="submit" value="Initialize App Data">
+        <input class="fa fa-id-badge" type="submit" value="Initialize Categories">
+    </form>
+</sec:authorize>
+<sec:authorize access="hasRole('ADMIN')">
+    <form action="<c:url value="/app/clear-places"/>" method="get">
+        <input class="fa fa-id-badge" type="submit" value="Clear places">
     </form>
 </sec:authorize>
 </body>

@@ -28,9 +28,18 @@ public class AppController {
 
     @GetMapping("/initialize")
     public String initializeCategories(@AuthenticationPrincipal CurrentUser user) {
-        if (user.getUser().getRoles().stream()
-                .anyMatch(r -> "ROLE_ADMIN".equals(r.getName()))) {
+        if (user.getUser().isAdmin()) {
             categoryService.initialize();
+        } else {
+            return "redirect:/403";
+        }
+        return "redirect:/app";
+    }
+
+    @GetMapping("/clear-places")
+    public String clearPlaces(@AuthenticationPrincipal CurrentUser user) {
+        if (user.getUser().isAdmin()) {
+            placeService.clear();
         } else {
             return "redirect:/403";
         }
@@ -233,4 +242,66 @@ public class AppController {
 
         return "redirect:/app";
     }
+
+    @GetMapping("/delete/trip/{id}")
+    public String confirmDeleteTrip(Model model,
+                                    @AuthenticationPrincipal CurrentUser currentUser,
+                                    @PathVariable Long id){
+        User user = currentUser.getUser();
+        if (user.isAdmin() || tripService.checkUserTrip(id,user)) {
+//            model.addAttribute("trip",tripService.findTripById(id));
+//            return "/app/confirmDeleteTrip";
+            tripService.delete(id);
+            return "redirect:/app";
+        } else {
+            return "redirect:/403";
+        }
+    }
+
+//    @PostMapping("/delete/trip/{id}")
+//    public String deleteTrip(@AuthenticationPrincipal CurrentUser currentUser,
+//                             @PathVariable Long id,
+//                             @RequestParam String choice){
+//        if("No".equals(choice)){
+//            return "redirect:/app";
+//        }
+//        User user = currentUser.getUser();
+//        if (user.isAdmin() || tripService.checkUserTrip(id,user)) {
+//            tripService.delete(id);
+//        } else {
+//            return "redirect:/403";
+//        }
+//        return "redirect:/app";
+//    }
+
+    @GetMapping("/delete/plan/{id}")
+    public String confirmDeletePlan(Model model,
+                                    @AuthenticationPrincipal CurrentUser currentUser,
+                                    @PathVariable Long id){
+        User user = currentUser.getUser();
+        if (user.isAdmin() || planService.checkUserPlan(id,user)) {
+//            model.addAttribute("plan",planService.findPlanById(id));
+//            return "/app/confirmDeletePlan";
+            planService.delete(id);
+            return "redirect:/app";
+        } else {
+            return "redirect:/403";
+        }
+    }
+
+//    @PostMapping("/delete/plan/{id}")
+//    public String deletePlan(@AuthenticationPrincipal CurrentUser currentUser,
+//                             @PathVariable Long id,
+//                             @RequestParam String choice){
+//        if("No".equals(choice)){
+//            return "redirect:/app";
+//        }
+//        User user = currentUser.getUser();
+//        if (user.isAdmin() || planService.checkUserPlan(id,user)) {
+//            planService.delete(id);
+//        } else {
+//            return "redirect:/403";
+//        }
+//        return "redirect:/app";
+//    }
 }

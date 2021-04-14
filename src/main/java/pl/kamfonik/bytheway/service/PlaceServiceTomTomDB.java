@@ -140,6 +140,11 @@ public class PlaceServiceTomTomDB implements PlaceService {
         return placeRepository.saveAll(places);
     }
 
+    @Override
+    public void clear() {
+        placeRepository.deleteAll();
+    }
+
     private String getUrl(Integer travelTime, Set<Category> categories) {
         Integer maxDetourInt = travelTime * MAX_DETOUR_PROCENT / 100;
         if (maxDetourInt > 3600) {

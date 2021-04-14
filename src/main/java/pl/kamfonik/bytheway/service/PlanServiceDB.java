@@ -24,4 +24,19 @@ public class PlanServiceDB implements PlanService{
     public Plan save(Plan plan){
         return planRepository.save(plan);
     }
+
+    @Override
+    public Plan findPlanById(Long id) {
+        return planRepository.findById(id).orElseThrow();
+    }
+
+    @Override
+    public Boolean checkUserPlan(Long id, User user) {
+        return findPlanById(id).getUser().equals(user);
+    }
+
+    @Override
+    public void delete(Long id) {
+        planRepository.deleteById(id);
+    }
 }

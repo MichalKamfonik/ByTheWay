@@ -65,4 +65,8 @@ public interface TripService {
     Trip findTripById(Long id);
 
     List<Trip> findUserTrips(User user);
+
+    Boolean checkUserTrip(Long id, User user);
+
+    void delete(Long id);
 }
